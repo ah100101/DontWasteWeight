@@ -42,8 +42,8 @@ namespace DontWasteWeight
             originSession.CreateBaseSet();
             originSession.CurrentTargetIndex = 0;
             originSession.CurrentTargetWeight = targetSets[0];
+            originSession.UpdateTargetIndex(targetSets);
 
-            //possibleLiftSessions.Add(originSession);
             possibleLiftSessions.Insert(new LiftSession(originSession));
 
             while (!solved && possibleLiftSessions.Size > 0)
@@ -52,12 +52,12 @@ namespace DontWasteWeight
                 //also need to test if the currentSession is at a target session or if it is a solution session
                 //this needs to run until the pq is empty or all the nodes steps are greater than the current solution session
                 LiftSession currentSession = new LiftSession(possibleLiftSessions.Pop());
-                //possibleLiftSessions.RemoveAt(0);
 
                 if (currentSession != null)
                 {
                     visitedSessions.Add(new LiftSession(currentSession));
 
+                    //i think this is being updated at the wrong time
                     currentSession.UpdateTargetIndex(targetSets);
                     solved = currentSession.AtFinalSet(targetSets);
 
@@ -75,12 +75,10 @@ namespace DontWasteWeight
 
         private static void ExpandSession(LiftSession currentSession)
         {
-            //for some reason all the lift sets are ending up the same...the first set is good here, but when the second one is added, the first one is being modified too
             if(currentSession.CanAddPlates())
             {
                 foreach(WeightStack stack in currentSession.SessionWeightStacks)
                 {
-                    //make this a constructor
                     PlateSet plateSetToAdd = new PlateSet();
                     plateSetToAdd.InitializePlates(stack.Weight);
 
@@ -89,7 +87,9 @@ namespace DontWasteWeight
                         LiftSession newSession = new LiftSession(currentSession);
                         newSession.AddPlates(plateSetToAdd);
 
-                        //for some reason when we add plates here, it's overriding the visited one as well, dont create newSessions like this
+                        //update target index
+                        newSession.UpdateTargetIndex(targetSets);
+
                         if(!SessionVisited(newSession, visitedSessions))
                         {
                             possibleLiftSessions.Insert(newSession);
@@ -112,6 +112,9 @@ namespace DontWasteWeight
                         {
                             LiftSession newSession = new LiftSession(currentSession);
                             newSession.StripPlates(i);
+
+                            //update target index
+                            newSession.UpdateTargetIndex(targetSets);
 
                             if(!SessionVisited(newSession, visitedSessions))
                             {
@@ -152,13 +155,6 @@ namespace DontWasteWeight
 
         private static bool SessionVisited(LiftSession newSession, List<LiftSession> history)
         {
-            //if (history.Any(ls => ls.CurrentTargetIndex == newSession.CurrentTargetIndex
-            //                && ls.WeightSetMoves == newSession.WeightSetMoves
-            //                && ls.UsedPlatesCount == newSession.UsedPlatesCount
-            //                && ls.LiftSets.Count == newSession.LiftSets.Count
-            //                && ls.LiftSets.FirstOrDefault().Bar.TotalWeight == newSession.LiftSets.FirstOrDefault().Bar.TotalWeight))
-            //    return true;
-
             if (history.Any(ls => ls.CurrentTargetIndex == newSession.CurrentTargetIndex
                             && ls.LiftSets.Peek().Bar.TotalWeight == newSession.LiftSets.FirstOrDefault().Bar.TotalWeight))
                 return true;
