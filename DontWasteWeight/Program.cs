@@ -57,8 +57,6 @@ namespace DontWasteWeight
                 {
                     visitedSessions.Add(new LiftSession(currentSession));
 
-                    //i think this is being updated at the wrong time
-                    currentSession.UpdateTargetIndex(targetSets);
                     solved = currentSession.AtFinalSet(targetSets);
 
                     if (!solved && currentSession.LiftSets != null)

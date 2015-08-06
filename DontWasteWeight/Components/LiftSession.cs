@@ -57,7 +57,7 @@ namespace DontWasteWeight.Components
             }
         }
 
-        public List<WeightStack> PulledWeightStack
+        public List<WeightStack> PulledWeightStacks
         {
             get
             {
@@ -141,8 +141,8 @@ namespace DontWasteWeight.Components
             _barWeight = session.BarWeight;
             _currentTargetIndex = session.CurrentTargetIndex;
             _currentTargetWeight = session.CurrentTargetWeight;
-            _pulledWeightStacks = new List<WeightStack>(session.PulledWeightStack);
-            _sessionWeightStacks = new List<WeightStack>(session.SessionWeightStacks);
+            _pulledWeightStacks = Cloner.Clone(session.PulledWeightStacks);
+            _sessionWeightStacks = Cloner.Clone(session.SessionWeightStacks);
             _usedPlatesCount = session.UsedPlatesCount;
             _weightSetMoves = session.WeightSetMoves;
         }
@@ -278,9 +278,25 @@ namespace DontWasteWeight.Components
             if (setsToRemove > 0)
             {
                 LiftSet newSet = new LiftSet(_liftSets.Peek());
-                newSet.Bar.RemovePlates(setsToRemove);
+                List<PlateSet> removedPlateSets = new List<PlateSet>();
+
+                removedPlateSets = newSet.Bar.RemovePlates(setsToRemove);
+
                 _liftSets.Push(newSet);
                 _weightSetMoves++;
+
+                if (removedPlateSets != null && removedPlateSets.Count > 0)
+                {
+                    foreach (PlateSet removedPlateSet in removedPlateSets)
+                    {
+                        WeightStack stackAddingTo = _pulledWeightStacks.FirstOrDefault(p => p.Weight == removedPlateSet.Weight);
+
+                        if (stackAddingTo != null)
+                        {
+                            stackAddingTo.Plates.Push(removedPlateSet);
+                        }
+                    }
+                }
             }
         }
 
@@ -315,6 +331,28 @@ namespace DontWasteWeight.Components
             return weightDifference;
         }
 
+        internal int PlateSetsUsed()
+        {
+            int plateSetsUsed = 0;
+
+            LiftSet currentLiftSet = LiftSets.Peek();
+
+            if (currentLiftSet != null)
+            {
+                plateSetsUsed = plateSetsUsed + currentLiftSet.Bar.LoadedPlates.Count;
+            }
+
+            if(PulledWeightStacks != null && PulledWeightStacks.Count > 0)
+            {
+                foreach(WeightStack stack in PulledWeightStacks)
+                {
+                    plateSetsUsed = plateSetsUsed + stack.Plates.Count;
+                }
+            }
+
+            return plateSetsUsed;
+        }
+
         #endregion
 
         #region Comparable
@@ -326,28 +364,25 @@ namespace DontWasteWeight.Components
                 return -1;
 
             LiftSession session = obj as LiftSession;
-            //return the session that has the lower difference, this is higher priority
+
             if (this.CurrentTargetIndex < session.CurrentTargetIndex)
                 return -1;
             else if (this.CurrentTargetIndex > session.CurrentTargetIndex)
                 return 1;
             else
             {
-                //if the distance to the target is the same then session with smallest weight pile is higher priority
                 if (this.TargetDifference() > session.TargetDifference())
                     return -1;
                 else if (this.TargetDifference() < session.TargetDifference())
                     return 1;
                 else
                 {
-                    //if the weight stack is the same then the one that's got the higher target state is higher priority
-                    if (this.PulledWeightStack.Count > session.PulledWeightStack.Count)
+                    if (PlateSetsUsed() > session.PlateSetsUsed())
                         return -1;
-                    else if (this.PulledWeightStack.Count < session.PulledWeightStack.Count)
+                    else if (PlateSetsUsed() < session.PlateSetsUsed())
                         return 1;
                     else
                     {
-                        //if the taret index is the same, the session with the lower movecount is higher priority
                         if (this.WeightSetMoves > session.WeightSetMoves)
                             return -1;
                         else if (this.WeightSetMoves < session.WeightSetMoves)

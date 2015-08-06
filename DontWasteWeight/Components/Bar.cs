@@ -89,13 +89,15 @@ namespace DontWasteWeight.Components
             _totalWeight = totalPlateWeight + _barWeight;
         }
 
-        internal void RemovePlates(int setsToRemove)
+        internal List<PlateSet> RemovePlates(int setsToRemove)
         {
+            List<PlateSet> plateSetsRemoved = new List<PlateSet>();
+
             if (setsToRemove <= _loadedPlates.Count)
             {
                 for (int i = 0; i < setsToRemove; i++)
                 {
-                    _loadedPlates.Pop();
+                    plateSetsRemoved.Add(_loadedPlates.Pop());
                 }
 
                 if (_loadedPlates.Count > 0)
@@ -115,6 +117,8 @@ namespace DontWasteWeight.Components
                     _totalWeight = _barWeight;
                 }
             }
+
+            return plateSetsRemoved;
         }
 
         #endregion

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DontWasteWeight.Components
 {
+    [Serializable]
     public class WeightStack
     {
         private decimal _weight;
