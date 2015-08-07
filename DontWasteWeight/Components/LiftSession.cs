@@ -304,21 +304,28 @@ namespace DontWasteWeight.Components
 
         internal void UpdateTargetIndex(decimal[] targetSets)
         {
-            LiftSet currentLiftSet = new LiftSet(this.LiftSets.FirstOrDefault());
+            LiftSet currentLiftSet = new LiftSet(this.LiftSets.Peek());
             if (currentLiftSet != null && CurrentTargetIndex < targetSets.Length - 1)
             {
-                if (currentLiftSet.Bar.TotalWeight == targetSets[CurrentTargetIndex + 1])
+                if (currentLiftSet.Bar.TotalWeight == targetSets[CurrentTargetIndex])
                 {
-                    CurrentTargetIndex = CurrentTargetIndex + 1;
-                    if(CurrentTargetIndex + 1 <= targetSets.Count() - 1)
-                        CurrentTargetWeight = targetSets[CurrentTargetIndex + 1];
+                    //if not on the final target, increment it. Otherwise, leave it
+                    if (CurrentTargetIndex != targetSets.Length - 1)
+                    {
+                        CurrentTargetIndex = CurrentTargetIndex + 1;
+                        CurrentTargetWeight = targetSets[CurrentTargetIndex];
+                    }
                 }
             }
         }
 
         internal bool AtFinalSet(decimal[] targetSets)
         {
-            if (this.CurrentTargetIndex == targetSets.Count() - 1)
+            LiftSet currentLiftSet = new LiftSet(this.LiftSets.Peek());
+
+            if (currentLiftSet != null
+                && CurrentTargetIndex == targetSets.Count() - 1
+                && currentLiftSet.Bar.TotalWeight == targetSets[CurrentTargetIndex])
                 return true;
             return false;
         }
@@ -396,6 +403,8 @@ namespace DontWasteWeight.Components
             }
 
             return -1;
+
+
         }
 
         ////we need to sort first by smallest difference, then by the weight pile, then by the target state, then by fewest moves

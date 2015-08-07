@@ -124,33 +124,6 @@ namespace DontWasteWeight
             }
         }
 
-        /*
-         * priority queue sorting
-         * check which has the fewest moves
-         * check which has the highest target index
-         * check which has the smallest weight pile
-         * check which total is closest to the next set weight
-         * 
-         * if we check which ones have the smallest difference to the next set weight:
-         *  this takes care of the items at the start, cause it will grab which puts most weight on first
-         *  after that initial set, once the difference starts going to 0 (at target) those will populate up...
-         *  but it won't distinguish which ones are at higher target states
-         *  so sort next on which ones have the smallest weight pile
-         *  if a pile has a high target index and a small weight pile will be prioritized same as small target index with small weight pile
-         *  but this is good, cause the large weight piles will go to bottom
-         *  ..those large weight piles might have a high target state though, so if they're the same send those with a high target state up
-         *  so far...sort by smallest different, then by weight pile, then by target state
-         *  
-         *  as long as weight piles keep building, the queue will keep bubbling up the lesser target states, which may overtake at some point
-         *  but say we get down to a couple that are at the final target state, with the same sized weight pile..which one gets selected?
-         *  the one with the fewest moves...otherwise there are multiple solutions...
-         *  
-         * so we need to sort first by smallest difference, then by the weight pile, then by the target state, then by fewest moves
-         * :)
-         * right?..RIGHT?
-         */
-        
-
         private static bool SessionVisited(LiftSession newSession, List<LiftSession> history)
         {
             if (history.Any(ls => ls.CurrentTargetIndex == newSession.CurrentTargetIndex

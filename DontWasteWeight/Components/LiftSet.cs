@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Axel.Utilities;
 
 namespace DontWasteWeight.Components
 {
@@ -36,7 +37,7 @@ namespace DontWasteWeight.Components
 
         public LiftSet(LiftSet liftSet)
         {
-            this._bar = new Bar(liftSet.Bar);
+            this._bar = Cloner.Clone(liftSet.Bar);
         }
 
         #endregion
