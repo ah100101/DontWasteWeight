@@ -404,96 +404,26 @@ namespace DontWasteWeight.Components
 
             return -1;
 
+            //decimal hoFNTargetIndex = 5 - CurrentTargetIndex;
+            //decimal hofNTargetDifference = TargetDifference();
+            //decimal hofNPlateSetsUsed = PlateSetsUsed();
+            //decimal hoFNWeightSetMoves = WeightSetMoves;
+            //decimal hoFN = hoFNTargetIndex + hofNTargetDifference + hofNPlateSetsUsed + hoFNWeightSetMoves;
+
+            //decimal sessionhoFNTargetIndex = 5 - session.CurrentTargetIndex;
+            //decimal sessionhofNTargetDifference = session.TargetDifference();
+            //decimal sessionhofNPlateSetsUsed = session.PlateSetsUsed();
+            //decimal sessionhoFNWeightSetMoves = session.WeightSetMoves;
+            //decimal sessionhoFN = hoFNTargetIndex + hofNTargetDifference + hofNPlateSetsUsed + hoFNWeightSetMoves;
+
+            //if (hoFN > sessionhoFN)
+            //    return -1;
+            //else if (hoFN < sessionhoFN)
+            //    return 1;
+            //else
+            //    return -1;
 
         }
-
-        ////we need to sort first by smallest difference, then by the weight pile, then by the target state, then by fewest moves
-        //public int CompareTo(object obj)
-        //{
-        //    if (obj == null)
-        //        return -1;
-
-        //    LiftSession session = obj as LiftSession;
-        //    //return the session that has the lower difference, this is higher priority
-        //    if (this.TargetDifference() > session.TargetDifference())
-        //        return -1;
-        //    else if (this.TargetDifference() < session.TargetDifference())
-        //        return 1;
-        //    else
-        //    {
-        //        //if the distance to the target is the same then session with smallest weight pile is higher priority
-        //        if (this.PulledWeightStack.Count > session.PulledWeightStack.Count)
-        //            return -1;
-        //        else if (this.PulledWeightStack.Count < session.PulledWeightStack.Count)
-        //            return 1;
-        //        else
-        //        {
-        //            //if the weight stack is the same then the one that's got the higher target state is higher priority
-        //            if (this.CurrentTargetIndex < session.CurrentTargetIndex)
-        //                return -1;
-        //            else if (this.CurrentTargetIndex > session.CurrentTargetIndex)
-        //                return 1;
-        //            else
-        //            {
-        //                //if the taret index is the same, the session with the lower movecount is higher priority
-        //                if (this.WeightSetMoves > session.WeightSetMoves)
-        //                    return -1;
-        //                else if (this.WeightSetMoves < session.WeightSetMoves)
-        //                    return 1;
-        //                else
-        //                {
-        //                    //if move count is different then they are equally good (fack)
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return -1;
-        //}
-
-        ////we need to sort first by smallest difference, then by the weight pile, then by the target state, then by fewest moves
-        //public int CompareTo(object obj)
-        //{
-        //    if (obj == null)
-        //        return -1;
-
-        //    LiftSession session = obj as LiftSession;
-        //    //return the session that has the lower difference, this is higher priority
-        //    if (this.TargetDifference() > session.TargetDifference())
-        //        return -1;
-        //    else if (this.TargetDifference() < session.TargetDifference())
-        //        return 1;
-        //    else
-        //    {
-        //        //if the distance to the target is the same then session with smallest weight pile is higher priority
-        //        if (this.PulledWeightStack.Count < session.PulledWeightStack.Count)
-        //            return -1;
-        //        else if (this.PulledWeightStack.Count > session.PulledWeightStack.Count)
-        //            return 1;
-        //        else
-        //        {
-        //            //if the weight stack is the same then the one that's got the higher target state is higher priority
-        //            if (this.CurrentTargetIndex > session.CurrentTargetIndex)
-        //                return -1;
-        //            else if (this.CurrentTargetIndex < session.CurrentTargetIndex)
-        //                return 1;
-        //            else
-        //            {
-        //                //if the taret index is the same, the session with the lower movecount is higher priority
-        //                if (this.WeightSetMoves < session.WeightSetMoves)
-        //                    return -1;
-        //                else if (this.WeightSetMoves > session.WeightSetMoves)
-        //                    return 1;
-        //                else
-        //                {
-        //                    //if move count is different then they are equally good (fack)
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return -1;
-        //}
 
         #endregion
 
