@@ -18,8 +18,31 @@ namespace DontWasteWeight.Components
         private int _currentTargetIndex;
         private decimal _currentTargetWeight;
         private decimal _barWeight;
-        
+        private decimal[] _targets;
+
+        #region Constants
+
+        private const int MaximumFinalIndexDelta = 49;
+        private const int MaximumWeightDelta = 699;
+        private const int MaximumMoves = 99;
+        private const int MaximumPlateSets = 49;
+        private const int MaximumFN = 178505050;
+
+        #endregion
+
         #region Properties
+
+        public decimal[] Targets
+        {
+            get
+            {
+                return _targets;
+            }
+            set
+            {
+                _targets = value;
+            }
+        }
 
         public decimal CurrentTargetWeight
         {
@@ -133,11 +156,7 @@ namespace DontWasteWeight.Components
 
         public LiftSession(LiftSession session)
         {
-            //this is copying the bar by reference, how am i supposed to do this????
-            //_liftSets = new Stack<LiftSet>(session.LiftSets);
             _liftSets = Cloner.Clone(session.LiftSets);
-            //_liftSets = new Stack<LiftSet>(new Stack<LiftSet>(session.LiftSets));
-            //var clonedStack = new Stack<T>(new Stack<T>(oldStack));
             _barWeight = session.BarWeight;
             _currentTargetIndex = session.CurrentTargetIndex;
             _currentTargetWeight = session.CurrentTargetWeight;
@@ -145,6 +164,7 @@ namespace DontWasteWeight.Components
             _sessionWeightStacks = Cloner.Clone(session.SessionWeightStacks);
             _usedPlatesCount = session.UsedPlatesCount;
             _weightSetMoves = session.WeightSetMoves;
+            _targets = session.Targets;
         }
 
         #endregion
@@ -358,6 +378,58 @@ namespace DontWasteWeight.Components
             }
 
             return plateSetsUsed;
+        }
+
+        public int DistanceToFinalIndex()
+        {
+            int delta = (_targets.Count() - 1) - CurrentTargetIndex;
+            return delta;
+        }
+
+        /// <summary>
+        /// Cost of initial node to n (current node)
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal gn()
+        {
+            //gn = c(max(d) + 1) + d
+            decimal cost = (MaximumPlateSets * (MaximumMoves + 1)) + MaximumMoves;
+
+            cost = (PlateSetsUsed() * (WeightSetMoves + 1)) + WeightSetMoves;
+            
+            return cost;
+        }
+
+        /// <summary>
+        /// Cost of getting from n to final node
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal hn()
+        {
+            //hn = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1)
+            decimal cost = (MaximumFinalIndexDelta * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
+                        + MaximumWeightDelta * (MaximumPlateSets + 1) * (MaximumMoves + 1);
+
+            decimal targetWeightDifference = TargetDifference();
+            decimal distanceToTargetIndex = DistanceToFinalIndex();
+
+            cost = (distanceToTargetIndex * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
+                        + targetWeightDifference * (MaximumPlateSets + 1) * (MaximumMoves + 1);
+
+            return cost;
+        }
+
+        /// <summary>
+        /// Returns fn to determine best node.
+        /// f(n) = h(n) + g(n) OR
+        /// f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal fn()
+        {
+            //f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
+            decimal val = hn() + gn();
+            return val;
         }
 
         #endregion

@@ -43,6 +43,7 @@ namespace DontWasteWeight
             originSession.CurrentTargetIndex = 0;
             originSession.CurrentTargetWeight = targetSets[0];
             originSession.UpdateTargetIndex(targetSets);
+            originSession.Targets = targetSets;
 
             possibleLiftSessions.Insert(new LiftSession(originSession));
 
