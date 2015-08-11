@@ -436,7 +436,6 @@ namespace DontWasteWeight.Components
 
         #region Comparable
 
-        //we need to sort first by smallest difference, then by the weight pile, then by the target state, then by fewest moves
         public int CompareTo(object obj)
         {
             if (obj == null)
@@ -444,57 +443,15 @@ namespace DontWasteWeight.Components
 
             LiftSession session = obj as LiftSession;
 
-            if (this.CurrentTargetIndex < session.CurrentTargetIndex)
+            decimal thisFn = fn();
+            decimal objFn = session.fn();
+
+            if (thisFn > objFn)
                 return -1;
-            else if (this.CurrentTargetIndex > session.CurrentTargetIndex)
+            else if (thisFn < objFn)
                 return 1;
-            else
-            {
-                if (this.TargetDifference() > session.TargetDifference())
-                    return -1;
-                else if (this.TargetDifference() < session.TargetDifference())
-                    return 1;
-                else
-                {
-                    if (PlateSetsUsed() > session.PlateSetsUsed())
-                        return -1;
-                    else if (PlateSetsUsed() < session.PlateSetsUsed())
-                        return 1;
-                    else
-                    {
-                        if (this.WeightSetMoves > session.WeightSetMoves)
-                            return -1;
-                        else if (this.WeightSetMoves < session.WeightSetMoves)
-                            return 1;
-                        else
-                        {
-                            //if move count is different then they are equally good (fack)
-                        }
-                    }
-                }
-            }
 
             return -1;
-
-            //decimal hoFNTargetIndex = 5 - CurrentTargetIndex;
-            //decimal hofNTargetDifference = TargetDifference();
-            //decimal hofNPlateSetsUsed = PlateSetsUsed();
-            //decimal hoFNWeightSetMoves = WeightSetMoves;
-            //decimal hoFN = hoFNTargetIndex + hofNTargetDifference + hofNPlateSetsUsed + hoFNWeightSetMoves;
-
-            //decimal sessionhoFNTargetIndex = 5 - session.CurrentTargetIndex;
-            //decimal sessionhofNTargetDifference = session.TargetDifference();
-            //decimal sessionhofNPlateSetsUsed = session.PlateSetsUsed();
-            //decimal sessionhoFNWeightSetMoves = session.WeightSetMoves;
-            //decimal sessionhoFN = hoFNTargetIndex + hofNTargetDifference + hofNPlateSetsUsed + hoFNWeightSetMoves;
-
-            //if (hoFN > sessionhoFN)
-            //    return -1;
-            //else if (hoFN < sessionhoFN)
-            //    return 1;
-            //else
-            //    return -1;
-
         }
 
         #endregion
