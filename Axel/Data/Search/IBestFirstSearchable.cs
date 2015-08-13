@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Axel.Data.Search
 {
     /// <summary>
-    /// Interface for implementing node object in best first search
+    /// Interface for node objects in best first search. Must be serializable.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IBestFirstSearchable<T> : IComparable
@@ -16,19 +16,19 @@ namespace Axel.Data.Search
         /// Cost of getting from initial node to current node (n)
         /// </summary>
         /// <returns>decimal</returns>
-        decimal gn();
+        decimal Gn();
 
         /// <summary>
         /// Cost of getting from current node (n) to final node
         /// </summary>
         /// <returns>decimal</returns>
-        decimal hn();
+        decimal Hn();
 
         /// <summary>
         /// Cost of h(n) + g(n)
         /// </summary>
         /// <returns>decimal</returns>
-        decimal fn();
+        decimal Fn();
 
         /// <summary>
         /// Returns array of next possible nodes
@@ -36,7 +36,12 @@ namespace Axel.Data.Search
         /// <returns>T[]</returns>
         T[] Expand();
 
-        bool SameNode(T target);
+        /// <summary>
+        /// Returns if this item and target item are equivalent. Determines if already visited or at goal
+        /// </summary>
+        /// <param name="compareItem"></param>
+        /// <returns>bool</returns>
+        bool IsEquivalentNode(T compareItem);
 
         /*
             class SearchItem : IBestFirstSearchable<SearchItem>
