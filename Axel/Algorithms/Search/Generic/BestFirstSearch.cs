@@ -17,6 +17,8 @@ namespace Axel.Algorithms.Search.Generic
     //     Specifies the type of elements in the stack. Must implement IBestFirstSearchable
     public class BestFirstSearch<T> where T : IBestFirstSearchable<T>
     {
+        #region Members
+
         /// <summary>
         /// Target item search finds solution to
         /// </summary>
@@ -43,6 +45,8 @@ namespace Axel.Algorithms.Search.Generic
         protected List<T> _history;
 
         protected Comparison<T> _comparison;
+
+        #endregion
 
         #region Properties
 
@@ -225,7 +229,6 @@ namespace Axel.Algorithms.Search.Generic
                         _history.Add(current);
 
                         //if current and target are not the same
-                        //if(Comparison.Invoke(current, _target) != 0)
                         if(_target.IsEquivalentNode(current))
                         {
                             //expand the current node, add results to heap
@@ -259,15 +262,6 @@ namespace Axel.Algorithms.Search.Generic
             }
 
             return response;
-        }
-
-        /// <summary>
-        /// True if current node is at solution
-        /// </summary>
-        /// <returns>bool</returns>
-        protected bool FoundSolution()
-        {
-            return false;
         }
 
         #endregion

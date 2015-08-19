@@ -42,33 +42,5 @@ namespace Axel.Data.Search
         /// <param name="compareItem"></param>
         /// <returns>bool</returns>
         bool IsEquivalentNode(T compareItem);
-
-        /*
-            class SearchItem : IBestFirstSearchable<SearchItem>
-            {
-                public decimal gn()
-                {
-                    return 0;
-                }
-
-                public decimal hn()
-                {
-                    return 0;
-                }
-
-                public decimal fn()
-                {
-                    return 0;
-                }
-
-                public SearchItem[] Expand()
-                {
-                    SearchItem[] items = new SearchItem[] { };
-
-                    return items;
-                }
-
-            }
-        */
     }
 }

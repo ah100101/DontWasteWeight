@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Axel.Data.Structures;
 using Axel.Data.Search;
+using Axel.Algorithms.Search.Generic;
 
 namespace DontWasteWeight
 {
@@ -71,6 +72,8 @@ namespace DontWasteWeight
                     }
                 }
             }
+
+            BestFirstSearch<LiftSession> liftSessionSearch = new BestFirstSearch<LiftSession>(originSession, originSession);
         }
 
         private static void ExpandSession(LiftSession currentSession)

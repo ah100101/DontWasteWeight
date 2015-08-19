@@ -1,4 +1,5 @@
-﻿using Axel.Utilities;
+﻿using Axel.Data.Search;
+using Axel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,18 +8,22 @@ using System.Threading.Tasks;
 
 namespace DontWasteWeight.Components
 {
-    public class LiftSession : IComparable
+    [Serializable]
+    public class LiftSession : IBestFirstSearchable<LiftSession>
     {
+        #region Members
+
         private Stack<LiftSet> _liftSets;
         private List<WeightStack> _sessionWeightStacks;
         private List<WeightStack> _pulledWeightStacks;
-
         private int _weightSetMoves;
         private int _usedPlatesCount;
         private int _currentTargetIndex;
         private decimal _currentTargetWeight;
         private decimal _barWeight;
         private decimal[] _targets;
+
+        #endregion
 
         #region Constants
 
@@ -434,6 +439,138 @@ namespace DontWasteWeight.Components
 
         #endregion
 
+        #region Interface Members
+
+        /// <summary>
+        /// Cost of initial node to n (current node)
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal Gn()
+        {
+            //gn = c(max(d) + 1) + d
+            decimal cost = (MaximumPlateSets * (MaximumMoves + 1)) + MaximumMoves;
+
+            cost = (PlateSetsUsed() * (WeightSetMoves + 1)) + WeightSetMoves;
+
+            return cost;
+        }
+
+        /// <summary>
+        /// Cost of getting from n to final node
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal Hn()
+        {
+            //hn = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1)
+            decimal cost = (MaximumFinalIndexDelta * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
+                        + MaximumWeightDelta * (MaximumPlateSets + 1) * (MaximumMoves + 1);
+
+            decimal targetWeightDifference = TargetDifference();
+            decimal distanceToTargetIndex = DistanceToFinalIndex();
+
+            cost = (distanceToTargetIndex * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
+                        + targetWeightDifference * (MaximumPlateSets + 1) * (MaximumMoves + 1);
+
+            return cost;
+        }
+
+        /// <summary>
+        /// Returns fn to determine best node.
+        /// f(n) = h(n) + g(n) OR
+        /// f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal Fn()
+        {
+            //f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
+            decimal val = Hn() + Gn();
+            return val;
+        }
+
+        /// <summary>
+        /// Expands session for an array next possible lift sessions
+        /// </summary>
+        /// <returns>ListSession[]</returns>
+        public LiftSession[] Expand()
+        {
+            //Create array for storing expandedSessions
+            List<LiftSession> expandedSessions = new List<LiftSession>();
+
+            //if plates are available for adding
+            if (CanAddPlates())
+            {
+                //for each stack of weights available for pulling
+                foreach (WeightStack stack in SessionWeightStacks)
+                {
+                    //Create and initialize a plateset from this weight stack
+                    PlateSet plateSetToAdd = new PlateSet();
+                    plateSetToAdd.InitializePlates(stack.Weight);
+
+                    //if we can add these plates, add them to the new session
+                    if (CanAddThesePlates(plateSetToAdd))
+                    {
+                        //create a new session with these plates
+                        LiftSession newSession = new LiftSession(this);
+                        newSession.AddPlates(plateSetToAdd);
+
+                        //update target index that have likely changed
+                        newSession.UpdateTargetIndex(_targets);
+
+                        //add this session into the list
+                        expandedSessions.Add(newSession);
+                    }
+                }
+            }
+
+            //if plates are capable of being removed
+            if (CanRemovePlates())
+            {
+                //if we have a liftset available for removing from
+                if (LiftSets.Count > 0)
+                {
+                    //get the top/current lift set for the session
+                    LiftSet currentLiftSet = new LiftSet(LiftSets.Peek());
+
+                    //if the lift set is valid and there are plates to remove from it
+                    if (currentLiftSet != null && currentLiftSet.CanRemovePlates())
+                    {
+                        //see how many sets of plates are on the bar
+                        int plateSetCount = LiftSets.Peek().Bar.LoadedPlates.Count;
+
+                        //for each plateset on the bar, create a new session and strip
+                        for (int i = 1; i <= plateSetCount; i++)
+                        {
+                            //create the session and strip the plates (counts as 1 move)
+                            LiftSession newSession = new LiftSession(this);
+                            newSession.StripPlates(i);
+
+                            //update target index that has likely changed
+                            newSession.UpdateTargetIndex(_targets);
+
+                            //add the new session to the list
+                            expandedSessions.Add(newSession);
+                        }
+                    }
+                }
+            }
+
+            //return the expanded array
+            return expandedSessions.ToArray();
+        }
+
+        //AH Note - this needs to also cover if on target state if we do targetstate.IsEquivalentNode(currentNode)
+        //Should check currentTargetIndex, totalweight. Like AtFinalState
+        public bool IsEquivalentNode(LiftSession compareItem)
+        {
+            if (CurrentTargetIndex == compareItem.CurrentTargetIndex
+                && LiftSets.Peek().Bar.TotalWeight == compareItem.LiftSets.Peek().Bar.TotalWeight)
+                return true;
+
+            return false;
+        }
+
+        #endregion
+
         #region Comparable
 
         public int CompareTo(object obj)
@@ -455,7 +592,5 @@ namespace DontWasteWeight.Components
         }
 
         #endregion
-
-
     }
 }
