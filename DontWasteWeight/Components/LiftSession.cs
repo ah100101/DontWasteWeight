@@ -176,6 +176,9 @@ namespace DontWasteWeight.Components
 
         #region Methods
 
+        /// <summary>
+        /// Creates initial base LiftSet and adds it to session
+        /// </summary>
         public void CreateBaseSet()
         {
             LiftSet baseLiftSet = new LiftSet();
@@ -184,8 +187,10 @@ namespace DontWasteWeight.Components
             LiftSets.Push(baseLiftSet);
         }
 
-        #region Adding Plates
-
+        /// <summary>
+        /// Adds PlateSet to top LiftSet
+        /// </summary>
+        /// <param name="plateSet">PlateSet to add</param>
         public void AddPlates(PlateSet plateSet)
         {
             if(!PulledPlatesAvailable(plateSet))
@@ -208,6 +213,10 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Determines if plates can be added from session weight stacks
+        /// </summary>
+        /// <returns>true if plates can be added</returns>
         public bool CanAddPlates()
         {
             if (_sessionWeightStacks.Any(ws => ws.Plates.Count > 0))
@@ -216,6 +225,11 @@ namespace DontWasteWeight.Components
             return false;
         }
 
+        /// <summary>
+        /// Determines if a provided PlateSet can be added
+        /// </summary>
+        /// <param name="neededPlates">true if session PlateSet is available for use</param>
+        /// <returns></returns>
         public bool CanAddThesePlates(PlateSet neededPlates)
         {
             if (PulledPlatesAvailable(neededPlates) || SessionPlatesAvailable(neededPlates))
@@ -224,18 +238,32 @@ namespace DontWasteWeight.Components
             return false;
         }
 
+        /// <summary>
+        /// Pulls PlateSet from Session's PulledStack
+        /// </summary>
+        /// <param name="neededPlateSet">PlateSet to pull</param>
+        /// <returns></returns>
         private PlateSet GetPlateSetFromPulledStack(PlateSet neededPlateSet)
         {
             PlateSet pulledPlateSet = new PlateSet(_pulledWeightStacks.FirstOrDefault(s => s.Weight == neededPlateSet.Weight).Plates.Pop());
             return pulledPlateSet;
         }
 
+        /// <summary>
+        /// Pulls PlateSet from Session's SessionStack
+        /// </summary>
+        /// <param name="neededPlateSet">PlateSet to pull</param>
+        /// <returns></returns>
         private PlateSet GetPlateSetFromSessionStack(PlateSet neededPlateSet)
         {
             PlateSet sessionPlateSet = new PlateSet(_sessionWeightStacks.FirstOrDefault(s => s.Weight == neededPlateSet.Weight).Plates.Pop());
             return sessionPlateSet;
         }
 
+        /// <summary>
+        /// Adds PlateSet to Session's PulledStack
+        /// </summary>
+        /// <param name="plateSet"></param>
         private void AddToPulledPlateStack(PlateSet plateSet)
         {
             WeightStack stack = _pulledWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight);
@@ -250,6 +278,11 @@ namespace DontWasteWeight.Components
             _usedPlatesCount = _usedPlatesCount + 2;
         }
 
+        /// <summary>
+        /// Determines if Session's PulledStack has a PlateSet available for use
+        /// </summary>
+        /// <param name="plateSet">PlateSet to Pull</param>
+        /// <returns>true if PlateSet is available in PulledStack</returns>
         private bool PulledPlatesAvailable(PlateSet plateSet)
         {
             if (_pulledWeightStacks != null && _pulledWeightStacks.Count > 0)
@@ -267,6 +300,11 @@ namespace DontWasteWeight.Components
             return false;
         }
 
+        /// <summary>
+        /// Determines if Session's SessionStack has a PlateSet available for use
+        /// </summary>
+        /// <param name="plateSet">PlateSet to pull</param>
+        /// <returns>true if PlateSet is available</returns>
         private bool SessionPlatesAvailable(PlateSet plateSet)
         {
             if (_sessionWeightStacks != null && _sessionWeightStacks.Count > 0)
@@ -284,10 +322,11 @@ namespace DontWasteWeight.Components
             return false;
         }
 
-        #endregion
-
-        #region Stripping Plates
-
+        
+        /// <summary>
+        /// Determines if plates can be removed
+        /// </summary>
+        /// <returns>true if plates can be removed safely</returns>
         public bool CanRemovePlates()
         {
             if (_liftSets != null
@@ -298,6 +337,10 @@ namespace DontWasteWeight.Components
             return false;
         }
 
+        /// <summary>
+        /// Strips plates from bar and adds to move count
+        /// </summary>
+        /// <param name="setsToRemove">PlateSets to remove</param>
         public void StripPlates(int setsToRemove)
         {
             if (setsToRemove > 0)
@@ -325,8 +368,6 @@ namespace DontWasteWeight.Components
             }
         }
 
-        #endregion
-
         internal void UpdateTargetIndex(decimal[] targetSets)
         {
             LiftSet currentLiftSet = new LiftSet(this.LiftSets.Peek());
@@ -342,17 +383,6 @@ namespace DontWasteWeight.Components
                     }
                 }
             }
-        }
-
-        internal bool AtFinalSet(decimal[] targetSets)
-        {
-            LiftSet currentLiftSet = new LiftSet(this.LiftSets.Peek());
-
-            if (currentLiftSet != null
-                && CurrentTargetIndex == targetSets.Count() - 1
-                && currentLiftSet.Bar.TotalWeight == targetSets[CurrentTargetIndex])
-                return true;
-            return false;
         }
 
         internal decimal TargetDifference()
@@ -385,56 +415,10 @@ namespace DontWasteWeight.Components
             return plateSetsUsed;
         }
 
-        public int DistanceToFinalIndex()
+        internal int DistanceToFinalIndex()
         {
             int delta = (_targets.Count() - 1) - CurrentTargetIndex;
             return delta;
-        }
-
-        /// <summary>
-        /// Cost of initial node to n (current node)
-        /// </summary>
-        /// <returns>decimal</returns>
-        public decimal gn()
-        {
-            //gn = c(max(d) + 1) + d
-            decimal cost = (MaximumPlateSets * (MaximumMoves + 1)) + MaximumMoves;
-
-            cost = (PlateSetsUsed() * (WeightSetMoves + 1)) + WeightSetMoves;
-            
-            return cost;
-        }
-
-        /// <summary>
-        /// Cost of getting from n to final node
-        /// </summary>
-        /// <returns>decimal</returns>
-        public decimal hn()
-        {
-            //hn = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1)
-            decimal cost = (MaximumFinalIndexDelta * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
-                        + MaximumWeightDelta * (MaximumPlateSets + 1) * (MaximumMoves + 1);
-
-            decimal targetWeightDifference = TargetDifference();
-            decimal distanceToTargetIndex = DistanceToFinalIndex();
-
-            cost = (distanceToTargetIndex * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
-                        + targetWeightDifference * (MaximumPlateSets + 1) * (MaximumMoves + 1);
-
-            return cost;
-        }
-
-        /// <summary>
-        /// Returns fn to determine best node.
-        /// f(n) = h(n) + g(n) OR
-        /// f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
-        /// </summary>
-        /// <returns>decimal</returns>
-        public decimal fn()
-        {
-            //f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
-            decimal val = hn() + gn();
-            return val;
         }
 
         #endregion
@@ -558,8 +542,11 @@ namespace DontWasteWeight.Components
             return expandedSessions.ToArray();
         }
 
-        //AH Note - this needs to also cover if on target state if we do targetstate.IsEquivalentNode(currentNode)
-        //Should check currentTargetIndex, totalweight. Like AtFinalState
+        /// <summary>
+        /// Determines if two LiftSession are the same.
+        /// </summary>
+        /// <param name="compareItem">LiftSession</param>
+        /// <returns></returns>
         public bool IsEquivalentNode(LiftSession compareItem)
         {
             if (CurrentTargetIndex == compareItem.CurrentTargetIndex
@@ -569,10 +556,11 @@ namespace DontWasteWeight.Components
             return false;
         }
 
-        #endregion
-
-        #region Comparable
-
+        /// <summary>
+        /// Compares LiftSessions
+        /// </summary>
+        /// <param name="obj">LiftSession being compared</param>
+        /// <returns>result of compare</returns>
         public int CompareTo(object obj)
         {
             if (obj == null)
@@ -580,8 +568,8 @@ namespace DontWasteWeight.Components
 
             LiftSession session = obj as LiftSession;
 
-            decimal thisFn = fn();
-            decimal objFn = session.fn();
+            decimal thisFn = Fn();
+            decimal objFn = session.Fn();
 
             if (thisFn > objFn)
                 return -1;

@@ -7,37 +7,34 @@ using System.Threading.Tasks;
 using Axel.Data.Structures;
 using Axel.Data.Search;
 using Axel.Algorithms.Search.Generic;
+using Axel.Utilities;
 
 namespace DontWasteWeight
 {
     class Program
     {
-        private static decimal[] targetSets;
-        //to be replaced with a priority queue
-        //private static List<LiftSession> possibleLiftSessions = new List<LiftSession>();
-        private static BinaryHeap<LiftSession> possibleLiftSessions = new BinaryHeap<LiftSession>();
-        //possibleLiftSessions = new List<LiftSession>();
-        //need to replace this with a binary search tree/heap... ;) O_O
-        private static List<LiftSession> visitedSessions = new List<LiftSession>();
-
         static void Main(string[] args)
         {
+            //Create all the necessary stacks of weights available for use
             List<WeightStack> startingWeightStacks = CreateGymWeightStacks();
 
+            //Create the array of target sets that need to be hit
             int numSets = 6;
-            targetSets = new decimal[numSets];
+            decimal[] targetSets = new decimal[numSets];
             targetSets[0] = 165;
             targetSets[1] = 185;
             targetSets[2] = 205;
             targetSets[3] = 225;
             targetSets[4] = 245;
             targetSets[5] = 265;
-
-            bool solved = false;
             
+            //session for starting
             LiftSession originSession = new LiftSession();
-            LiftSession solvedSession = new LiftSession();
 
+            //session for finishing
+            LiftSession targetSession = new LiftSession();
+
+            //initialize origin session
             originSession.BarWeight = 45;
             originSession.WeightSetMoves = 0;
             originSession.SessionWeightStacks = startingWeightStacks;
@@ -47,95 +44,19 @@ namespace DontWasteWeight
             originSession.UpdateTargetIndex(targetSets);
             originSession.Targets = targetSets;
 
-            possibleLiftSessions.Insert(new LiftSession(originSession));
+            //initialize target session
+            targetSession = Cloner.Clone(originSession);
+            targetSession.CurrentTargetIndex = targetSession.Targets.Count() - 1;
+            targetSession.CurrentTargetWeight = targetSession.Targets[targetSession.CurrentTargetIndex];
+            LiftSet targetSet = new LiftSet();
+            targetSet.Bar.TotalWeight = targetSession.CurrentTargetWeight;
+            targetSession.LiftSets.Push(targetSet);
 
-            while (!solved && possibleLiftSessions.Size > 0)
-            {
-                //in a priority queue, this needs to pop the top off the stack
-                //also need to test if the currentSession is at a target session or if it is a solution session
-                //this needs to run until the pq is empty or all the nodes steps are greater than the current solution session
-                LiftSession currentSession = new LiftSession(possibleLiftSessions.Pop());
+            //create best first search for lift sessions
+            BestFirstSearch<LiftSession> liftSessionSearch = new BestFirstSearch<LiftSession>(targetSession, originSession);
 
-                if (currentSession != null)
-                {
-                    visitedSessions.Add(new LiftSession(currentSession));
-
-                    solved = currentSession.AtFinalSet(targetSets);
-
-                    if (!solved && currentSession.LiftSets != null)
-                    {
-                        ExpandSession(currentSession);
-                    }
-                    else if(solved)
-                    {
-                        solvedSession = currentSession;
-                    }
-                }
-            }
-
-            BestFirstSearch<LiftSession> liftSessionSearch = new BestFirstSearch<LiftSession>(originSession, originSession);
-        }
-
-        private static void ExpandSession(LiftSession currentSession)
-        {
-            if(currentSession.CanAddPlates())
-            {
-                foreach(WeightStack stack in currentSession.SessionWeightStacks)
-                {
-                    PlateSet plateSetToAdd = new PlateSet();
-                    plateSetToAdd.InitializePlates(stack.Weight);
-
-                    if(currentSession.CanAddThesePlates(plateSetToAdd))
-                    {
-                        LiftSession newSession = new LiftSession(currentSession);
-                        newSession.AddPlates(plateSetToAdd);
-
-                        //update target index
-                        newSession.UpdateTargetIndex(targetSets);
-
-                        if(!SessionVisited(newSession, visitedSessions))
-                        {
-                            possibleLiftSessions.Insert(newSession);
-                        }
-                    }
-                }
-            }
-
-            if(currentSession.CanRemovePlates())
-            {
-                if(currentSession.LiftSets.Count > 0)
-                {
-                    LiftSet currentLiftSet = new LiftSet(currentSession.LiftSets.Peek());
-
-                    if (currentLiftSet != null && currentLiftSet.CanRemovePlates())
-                    {
-                        int plateSetCount = currentSession.LiftSets.Peek().Bar.LoadedPlates.Count;
-
-                        for (int i = 1; i <= plateSetCount; i++)
-                        {
-                            LiftSession newSession = new LiftSession(currentSession);
-                            newSession.StripPlates(i);
-
-                            //update target index
-                            newSession.UpdateTargetIndex(targetSets);
-
-                            if(!SessionVisited(newSession, visitedSessions))
-                            {
-                                possibleLiftSessions.Insert(newSession);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private static bool SessionVisited(LiftSession newSession, List<LiftSession> history)
-        {
-            if (history.Any(ls => ls.CurrentTargetIndex == newSession.CurrentTargetIndex
-                            && ls.LiftSets.Peek().Bar.TotalWeight == newSession.LiftSets.FirstOrDefault().Bar.TotalWeight))
-                return true;
-
-            return false;
+            //search
+            BestFirstSearch<LiftSession>.SearchResponse response = liftSessionSearch.Search(); 
         }
 
         private static List<WeightStack> CreateGymWeightStacks()

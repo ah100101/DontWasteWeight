@@ -160,11 +160,7 @@ namespace Axel.Algorithms.Search.Generic
         /// <param name="origin">Starting node</param>
         public BestFirstSearch(T target, T origin)
         {
-            _target = target;
-            _origin = origin;
-            _solved = false;
-            _binaryheap = new BinaryHeap<T>();
-            _binaryheap.Insert(_origin);
+            Initialize(target, origin);
         }
 
         #endregion
@@ -178,11 +174,7 @@ namespace Axel.Algorithms.Search.Generic
         /// <param name="origin">Starting node</param>
         public void InitializeSearch(T target, T origin)
         {
-            _target = target;
-            _origin = origin;
-            _solved = false;
-            _binaryheap = new BinaryHeap<T>();
-            _binaryheap.Insert(_origin);
+            Initialize(target, origin);
         }
 
         /// <summary>
@@ -209,10 +201,10 @@ namespace Axel.Algorithms.Search.Generic
         /// <summary>
         /// Executes best first search
         /// </summary>
-        public SearchResponse<T> Search()
+        public SearchResponse Search()
         {
             //initialize response to be returned
-            SearchResponse<T> response = new SearchResponse<T>();
+            SearchResponse response = new SearchResponse();
 
             try
             {
@@ -229,7 +221,7 @@ namespace Axel.Algorithms.Search.Generic
                         _history.Add(current);
 
                         //if current and target are not the same
-                        if(_target.IsEquivalentNode(current))
+                        if(!_target.IsEquivalentNode(current))
                         {
                             //expand the current node, add results to heap
                             Expand(current);
@@ -264,6 +256,21 @@ namespace Axel.Algorithms.Search.Generic
             return response;
         }
 
+        /// <summary>
+        /// Initializes member variables
+        /// </summary>
+        /// <param name="target">Node to search for</param>
+        /// <param name="origin">Node to search from</param>
+        private void Initialize(T target, T origin)
+        {
+            _target = target;
+            _origin = origin;
+            _solved = false;
+            _binaryheap = new BinaryHeap<T>();
+            _binaryheap.Insert(_origin);
+            _history = new List<T>();
+        }
+
         #endregion
 
         #region Response
@@ -271,12 +278,11 @@ namespace Axel.Algorithms.Search.Generic
         /// <summary>
         /// Response class that gets returned post best first search
         /// </summary>
-        /// <typeparam name="U"></typeparam>
-        public class SearchResponse<U> where U : T
+        public class SearchResponse
         {
             private bool _succeeded;
             private bool _solutionFound;
-            private U _solution;
+            private T _solution;
             private string _errorMessage;
             private Exception _errorException;
 
@@ -306,7 +312,7 @@ namespace Axel.Algorithms.Search.Generic
                 }
             }
 
-            public U Solution
+            public T Solution
             {
                 get
                 {
