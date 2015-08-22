@@ -10,7 +10,8 @@ namespace WeightTests.Components
     [TestClass]
     public class SearchTests
     {
-        [TestMethod]
+        [TestCategory("Search"), TestMethod]
+        [Timeout(10000)]
         public void OptimalFound()
         {
             //Create all the necessary stacks of weights available for use

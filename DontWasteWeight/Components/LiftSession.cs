@@ -157,6 +157,8 @@ namespace DontWasteWeight.Components
             _barWeight = 0;
             _usedPlatesCount = 0;
             _currentTargetIndex = -1;
+            _currentTargetWeight = -1;
+            _targets = new decimal[0];
         }
 
         public LiftSession(LiftSession session)
