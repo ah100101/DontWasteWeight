@@ -136,6 +136,27 @@ namespace WeightTests.Components
             Assert.AreNotEqual(session1.LiftSets.Peek().Bar.LoadedPlates.Count, session2.LiftSets.Peek().Bar.LoadedPlates.Count);
         }
 
+        [TestCategory("LiftSession"), TestMethod]
+        public void BaseLiftSet_CreatedFrom_CreateBaseSet()
+        {
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CreateBaseSet();
+
+            Assert.AreEqual(1, session.LiftSets.Count);
+            Assert.AreEqual(45, session.LiftSets.Peek().Bar.BarWeight);
+            Assert.AreEqual(45, session.LiftSets.Peek().Bar.TotalWeight);
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void PulledStack_Created_WhenAddingNewPlateSet()
+        {
+            LiftSession session = new LiftSession();
+            session.AddPlates(new PlateSet(45));
+
+            Assert.AreEqual(1, session.PulledWeightStacks.Count);
+        }
+
         private static List<WeightStack> CreateGymWeightStacks()
         {
             List<WeightStack> weightStacks = new List<WeightStack>();
