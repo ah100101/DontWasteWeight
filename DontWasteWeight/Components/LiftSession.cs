@@ -368,7 +368,7 @@ namespace DontWasteWeight.Components
             }
         }
 
-        internal void UpdateTargetIndex(decimal[] targetSets)
+        public void UpdateTargetIndex(decimal[] targetSets)
         {
             LiftSet currentLiftSet = new LiftSet(this.LiftSets.Peek());
             if (currentLiftSet != null && CurrentTargetIndex < targetSets.Length - 1)

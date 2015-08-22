@@ -62,6 +62,13 @@ namespace DontWasteWeight.Components
             _loadedPlates = new Stack<PlateSet>();
         }
 
+        public Bar(int weight)
+        {
+            _barWeight = 45;
+            _totalWeight = 45;
+            _loadedPlates = new Stack<PlateSet>();
+        }
+
         public Bar(Bar bar)
         {
             _barWeight = bar.BarWeight;
