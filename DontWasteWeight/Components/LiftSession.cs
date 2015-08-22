@@ -389,8 +389,12 @@ namespace DontWasteWeight.Components
         {
             decimal targetWeight = this.CurrentTargetWeight;
             decimal currentWeight = this._liftSets.Peek().Bar.TotalWeight;
-            decimal weightDifference = Math.Abs(targetWeight - currentWeight);
-            return weightDifference;
+            decimal weightDifference = targetWeight - currentWeight;
+
+            if (weightDifference > 0)
+                return weightDifference;
+            else
+                return 0;
         }
 
         internal int PlateSetsUsed()
@@ -426,10 +430,60 @@ namespace DontWasteWeight.Components
         #region Interface Members
 
         /// <summary>
-        /// Cost of initial node to n (current node)
+        /// Cost of initial node to n (current node). Number of plate sets used.
         /// </summary>
         /// <returns>decimal</returns>
         public decimal Gn()
+        {
+            return PlateSetsUsed();
+        }
+
+        /// <summary>
+        /// Cost of getting from n to final node. Approximate number of plate sets to still be used
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal Hn()
+        {
+            //initialize value very high to avoid making session appear at top of heap
+            decimal approxPlateSetsToUse = 1000;
+
+            //set the approximate weight to add to the difference to the next target
+            decimal approxTotalWeightToAdd = TargetDifference();
+
+            //only want to compute deltas between targets if we are more than 1 away from the end
+            if (CurrentTargetIndex < Targets.Count() - 1)
+            {
+                //for each target weight, starting with the current compute delta
+                for (int i = CurrentTargetIndex; i < Targets.Count() - 1; i++)
+                {
+                    decimal currentTargetWeight = Targets[i];
+                    decimal nextTargetWeight = Targets[i + 1];
+
+                    //add delta to the approximate total weight to add
+                    approxTotalWeightToAdd = approxTotalWeightToAdd + Math.Abs(currentTargetWeight - nextTargetWeight);
+                }
+            }
+
+            //get the largest plateset at our disposal
+            WeightStack lightestWeightStack = SessionWeightStacks.OrderByDescending(p => p.Weight).LastOrDefault();
+
+            if (lightestWeightStack != null)
+            {
+                //double the weight of that plate so we can get the weight of a plateset at that weight
+                decimal lightestPlateSetWeight = 2 * lightestWeightStack.Weight;
+
+                //divide the approximate total by the plateset weight for the estimated number of plates to be used
+                approxPlateSetsToUse = approxTotalWeightToAdd / lightestPlateSetWeight;
+            }
+
+            return approxPlateSetsToUse;
+        }
+
+        /// <summary>
+        /// Cost of initial node to n (current node)
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal GnByPlatesAndMoves()
         {
             //gn = c(max(d) + 1) + d
             decimal cost = (MaximumPlateSets * (MaximumMoves + 1)) + MaximumMoves;
@@ -443,28 +497,28 @@ namespace DontWasteWeight.Components
         /// Cost of getting from n to final node
         /// </summary>
         /// <returns>decimal</returns>
-        public decimal Hn()
+        public decimal HnByWeightIndexDifference()
         {
             //hn = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1)
             decimal cost = (MaximumFinalIndexDelta * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
                         + MaximumWeightDelta * (MaximumPlateSets + 1) * (MaximumMoves + 1);
 
-            decimal targetWeightDifference = TargetDifference();
-            decimal distanceToTargetIndex = DistanceToFinalIndex();
+        decimal targetWeightDifference = TargetDifference();
+        decimal distanceToTargetIndex = DistanceToFinalIndex();
 
-            cost = (distanceToTargetIndex * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
-                        + targetWeightDifference * (MaximumPlateSets + 1) * (MaximumMoves + 1);
+        cost = (distanceToTargetIndex* (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
+                        + targetWeightDifference* (MaximumPlateSets + 1) * (MaximumMoves + 1);
 
             return cost;
         }
 
-        /// <summary>
-        /// Returns fn to determine best node.
-        /// f(n) = h(n) + g(n) OR
-        /// f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
-        /// </summary>
-        /// <returns>decimal</returns>
-        public decimal Fn()
+    /// <summary>
+    /// Returns fn to determine best node.
+    /// f(n) = h(n) + g(n) OR
+    /// f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
+    /// </summary>
+    /// <returns>decimal</returns>
+    public decimal Fn()
         {
             //f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
             decimal val = Hn() + Gn();
