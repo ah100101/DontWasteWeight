@@ -149,12 +149,30 @@ namespace WeightTests.Components
         }
 
         [TestCategory("LiftSession"), TestMethod]
-        public void PulledStack_Created_WhenAddingNewPlateSet()
+        public void PlatesNotAdded_WhenNoSessionStacks()
         {
             LiftSession session = new LiftSession();
             session.AddPlates(new PlateSet(45));
 
+            Assert.AreEqual(0, session.PulledWeightStacks.Count);
+            Assert.AreEqual(0, session.SessionWeightStacks.Count);
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void PlatesAdded_WhenSessionStacksAvailable()
+        {
+            LiftSession session = new LiftSession();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 1);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            session.AddPlates(new PlateSet(45));
+
             Assert.AreEqual(1, session.PulledWeightStacks.Count);
+            Assert.AreEqual(1, session.SessionWeightStacks.Count);
+            Assert.AreEqual(1, session.PulledWeightStacks[0].Plates.Count);
+            Assert.AreEqual(0, session.SessionWeightStacks[0].Plates.Count);
         }
 
         private static List<WeightStack> CreateGymWeightStacks()

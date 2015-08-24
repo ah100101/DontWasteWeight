@@ -153,6 +153,7 @@ namespace DontWasteWeight.Components
         {
             _liftSets = new Stack<LiftSet>();
             _pulledWeightStacks = new List<WeightStack>();
+            _sessionWeightStacks = new List<WeightStack>();
             _weightSetMoves = 0;
             _barWeight = 0;
             _usedPlatesCount = 0;
