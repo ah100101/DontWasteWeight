@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Axel.Data.Structures
 {
+    /// <summary>
+    /// Min Heap structure for keeping lowest valued object at top. Class must implement IComparable
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BinaryHeap<T>
     {
         protected T[] _items;
@@ -50,7 +54,7 @@ namespace Axel.Data.Structures
             }
         }
 
-        public void Insert(T item)
+        public void Push(T item)
         {
             if (_size == _items.Length)
                 Resize();
@@ -59,7 +63,7 @@ namespace Axel.Data.Structures
             _size++;
         }
 
-        public T Peak()
+        public T Peek()
         {
             return _items[0];
         }
@@ -87,7 +91,6 @@ namespace Axel.Data.Structures
                 int parentIdx = (childIdx - 1) / 2;
                 if (_comparison.Invoke(_items[childIdx], _items[parentIdx]) > 0)
                 {
-                    // swap parent and child
                     T t = _items[parentIdx];
                     _items[parentIdx] = _items[childIdx];
                     _items[childIdx] = t;

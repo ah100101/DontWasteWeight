@@ -88,20 +88,16 @@ namespace DontWasteWeight.Components
 
         internal void InitializePlates(decimal dec)
         {
-            
-            if(dec != null)
-            {
-                _weight = dec;
-                _totalWeight = _weight + _weight;
+            _weight = dec;
+            _totalWeight = _weight + _weight;
 
-                Plate[] plates
-                        = new Plate[]{ 
-                                        new Plate(){ Weight = dec }, 
-                                        new Plate(){ Weight = dec }
-                                    };
+            Plate[] plates
+                    = new Plate[]{ 
+                                    new Plate(){ Weight = dec }, 
+                                    new Plate(){ Weight = dec }
+                                };
 
-                _plates = plates;
-            }
+            _plates = plates;
         }
 
         #endregion
