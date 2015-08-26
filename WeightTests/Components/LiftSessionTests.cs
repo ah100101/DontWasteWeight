@@ -8,6 +8,8 @@ namespace WeightTests.Components
     [TestClass]
     public class LiftSessionTests
     {
+        #region Constructor Tests
+
         [TestCategory("LiftSession"), TestMethod]
         public void DefaultConstructor_Initializes_SearchMembers()
         {
@@ -136,6 +138,10 @@ namespace WeightTests.Components
             Assert.AreNotEqual(session1.LiftSets.Peek().Bar.LoadedPlates.Count, session2.LiftSets.Peek().Bar.LoadedPlates.Count);
         }
 
+        #endregion
+
+        #region Initialization Tests
+
         [TestCategory("LiftSession"), TestMethod]
         public void BaseLiftSet_CreatedFrom_CreateBaseSet()
         {
@@ -148,10 +154,18 @@ namespace WeightTests.Components
             Assert.AreEqual(45, session.LiftSets.Peek().Bar.TotalWeight);
         }
 
+        #endregion
+
+        #region Adding Plate Tests
+
         [TestCategory("LiftSession"), TestMethod]
         public void PlatesNotAdded_WhenNoSessionStacks()
         {
             LiftSession session = new LiftSession();
+
+            Assert.IsFalse(session.CanAddPlates());
+            Assert.IsFalse(session.CanAddThesePlates(new PlateSet(45)));
+
             session.AddPlates(new PlateSet(45));
 
             Assert.AreEqual(0, session.PulledWeightStacks.Count);
@@ -167,6 +181,9 @@ namespace WeightTests.Components
             fortyFives.Fill(45, 1);
             session.SessionWeightStacks.Add(fortyFives);
 
+            Assert.IsTrue(session.CanAddPlates());
+            Assert.IsTrue(session.CanAddThesePlates(new PlateSet(45)));
+
             session.AddPlates(new PlateSet(45));
 
             Assert.AreEqual(1, session.PulledWeightStacks.Count);
@@ -174,6 +191,399 @@ namespace WeightTests.Components
             Assert.AreEqual(1, session.PulledWeightStacks[0].Plates.Count);
             Assert.AreEqual(0, session.SessionWeightStacks[0].Plates.Count);
         }
+
+        #endregion
+
+        #region Removing Plate Tests
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void PlatesNotRemoved_WhenNoSessionStacks()
+        {
+            LiftSession session = new LiftSession();
+
+            Assert.IsFalse(session.CanRemovePlates());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void PlatesNotRemoved_WhenNoLiftSets()
+        {
+            LiftSession session = new LiftSession();
+            session.StripPlates(2);
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void PlatesNotRemoved_WhenNoPlatesLoaded()
+        {
+            LiftSession session = new LiftSession();
+            session.CreateBaseSet();
+            session.StripPlates(2);
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void PlatesRemoved_WhenLoaded()
+        {
+            LiftSession session = new LiftSession();
+            session.CreateBaseSet();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            session.AddPlates(new PlateSet(45));
+            session.AddPlates(new PlateSet(45));
+            session.AddPlates(new PlateSet(45));
+
+            Assert.AreEqual(3, session.LiftSets.Peek().Bar.LoadedPlates.Count);
+
+            session.StripPlates(2);
+
+            Assert.AreEqual(1, session.LiftSets.Peek().Bar.LoadedPlates.Count);
+
+            session.StripPlates(1);
+
+            Assert.AreEqual(0, session.LiftSets.Peek().Bar.LoadedPlates.Count);
+        }
+
+        #endregion
+
+        #region Heuristic Methods
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void GnZero_WithNoPlates()
+        {
+            LiftSession session = new LiftSession();
+            session.CreateBaseSet();
+
+            Assert.AreEqual(0, session.Gn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void GnSameAsLoadedPlates()
+        {
+            LiftSession session = new LiftSession();
+            session.CreateBaseSet();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            session.AddPlates(new PlateSet(45));
+            session.AddPlates(new PlateSet(45));
+            session.AddPlates(new PlateSet(45));
+
+            Assert.AreEqual(3, session.Gn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void GnSameAsLoadedPlates_ThenStrippedOff()
+        {
+            LiftSession session = new LiftSession();
+            session.CreateBaseSet();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            session.AddPlates(new PlateSet(45));
+            session.AddPlates(new PlateSet(45));
+            session.AddPlates(new PlateSet(45));
+
+            session.StripPlates(3);
+
+            Assert.AreEqual(3, session.Gn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void HnValue_ReflectsTargetDifferences()
+        {
+            int numSets = 2;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 135;
+            targetSets[1] = 225;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 0;
+            session.CurrentTargetWeight = targetSets[0];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            Assert.AreEqual(2, session.Hn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void HnValue_ReflectsTargetDifferences_DifferenceX2()
+        {
+            int numSets = 2;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 135;
+            targetSets[1] = 315;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 0;
+            session.CurrentTargetWeight = targetSets[0];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            Assert.AreEqual(3, session.Hn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void HnValue_DoesNotReflect_CurrentLocation()
+        {
+            int numSets = 2;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 135;
+            targetSets[1] = 315;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 1;
+            session.CurrentTargetWeight = targetSets[1];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            LiftSet nextLiftSet = new LiftSet();
+            nextLiftSet.Bar.BarWeight = 45;
+            nextLiftSet.Bar.LoadedPlates.Push(new PlateSet(45));
+            nextLiftSet.Bar.TotalWeight = 135;
+
+            session.LiftSets.Push(nextLiftSet);
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            Assert.AreEqual(2, session.Hn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void HnValue_Zero_AtLastTarget()
+        {
+            int numSets = 1;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 135;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 1;
+            session.CurrentTargetWeight = targetSets[0];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            LiftSet nextLiftSet = new LiftSet();
+            nextLiftSet.Bar.BarWeight = 45;
+            nextLiftSet.Bar.LoadedPlates.Push(new PlateSet(45));
+            nextLiftSet.Bar.TotalWeight = 135;
+
+            session.LiftSets.Push(nextLiftSet);
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            Assert.AreEqual(0, session.Hn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void FnValue_Combining_PreviousAndForward()
+        {
+            int numSets = 2;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 135;
+            targetSets[1] = 315;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 1;
+            session.CurrentTargetWeight = targetSets[1];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            LiftSet nextLiftSet = new LiftSet();
+            nextLiftSet.Bar.BarWeight = 45;
+            nextLiftSet.Bar.LoadedPlates.Push(new PlateSet(45));
+            nextLiftSet.Bar.TotalWeight = 135;
+
+            session.LiftSets.Push(nextLiftSet);
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            Assert.AreEqual(3, session.Fn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void FnValue_OnlyGn_AtFinalTarget()
+        {
+            int numSets = 1;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 135;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 1;
+            session.CurrentTargetWeight = targetSets[0];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            LiftSet nextLiftSet = new LiftSet();
+            nextLiftSet.Bar.BarWeight = 45;
+            nextLiftSet.Bar.LoadedPlates.Push(new PlateSet(45));
+            nextLiftSet.Bar.TotalWeight = 135;
+
+            session.LiftSets.Push(nextLiftSet);
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            Assert.AreEqual(1, session.Fn());
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void FnValue_OnlyHn_AtStart()
+        {
+            int numSets = 2;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 135;
+            targetSets[1] = 315;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 0;
+            session.CurrentTargetWeight = targetSets[0];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            Assert.AreEqual(3, session.Fn());
+        }
+
+        #endregion
+
+        #region Expanding
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void ExpansionsCount_Matches_SessionStacks_AtStart()
+        {
+            int numSets = 2;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 225;
+            targetSets[1] = 315;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 0;
+            session.CurrentTargetWeight = targetSets[0];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            WeightStack thirtyFives = new WeightStack();
+            thirtyFives.Fill(35, 10);
+            session.SessionWeightStacks.Add(thirtyFives);
+
+            Assert.AreEqual(2, session.Expand().Length);
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void ExpansionsCount_Matches_SessionStacks_PlusStrip_WhenLoaded()
+        {
+            int numSets = 2;
+            decimal[] targetSets = new decimal[numSets];
+            targetSets[0] = 225;
+            targetSets[1] = 315;
+
+            LiftSession session = new LiftSession();
+            session.BarWeight = 45;
+            session.CurrentTargetIndex = 0;
+            session.CurrentTargetWeight = targetSets[0];
+            session.Targets = targetSets;
+            session.CreateBaseSet();
+
+            LiftSet nextLiftSet = new LiftSet();
+            nextLiftSet.Bar.BarWeight = 45;
+            nextLiftSet.Bar.LoadedPlates.Push(new PlateSet(45));
+            nextLiftSet.Bar.TotalWeight = 135;
+            session.LiftSets.Push(nextLiftSet);
+
+            WeightStack fortyFives = new WeightStack();
+            fortyFives.Fill(45, 10);
+            session.SessionWeightStacks.Add(fortyFives);
+
+            WeightStack thirtyFives = new WeightStack();
+            thirtyFives.Fill(35, 10);
+            session.SessionWeightStacks.Add(thirtyFives);
+
+            Assert.AreEqual(3, session.Expand().Length);
+        }
+
+        #endregion
+
+        #region Equivalent Tests
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void NotEquivalent_IndexDifferent()
+        {
+            LiftSession session1 = new LiftSession();
+            session1.CurrentTargetIndex = 1;
+            LiftSession session2 = new LiftSession();
+
+            Assert.IsFalse(session1.IsEquivalentNode(session2));
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void NotEquivalent_WeightDifferent()
+        {
+            LiftSession session1 = new LiftSession();
+            session1.BarWeight = 45;
+            session1.CreateBaseSet();
+            
+
+            LiftSession session2 = new LiftSession();
+            session2.BarWeight = 35;
+            session2.CreateBaseSet();
+
+            Assert.IsFalse(session1.IsEquivalentNode(session2));
+        }
+
+        [TestCategory("LiftSession"), TestMethod]
+        public void Equivalent_IndexAndWeightSame()
+        {
+            LiftSession session1 = new LiftSession();
+            session1.BarWeight = 45;
+            session1.CurrentTargetIndex = 1;
+            session1.CreateBaseSet();
+
+
+            LiftSession session2 = new LiftSession();
+            session2.BarWeight = 45;
+            session2.CurrentTargetIndex = 1;
+            session2.CreateBaseSet();
+
+            Assert.IsTrue(session1.IsEquivalentNode(session2));
+        }
+
+        #endregion
+
+        #region Helper Methods
 
         private static List<WeightStack> CreateGymWeightStacks()
         {
@@ -201,5 +611,7 @@ namespace WeightTests.Components
 
             return weightStacks;
         }
+
+        #endregion
     }
 }

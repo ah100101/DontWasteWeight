@@ -162,6 +162,24 @@ namespace DontWasteWeight.Components
             _targets = new decimal[0];
         }
 
+        public LiftSession(bool initialize)
+        {
+            if (initialize)
+            {
+                CreateBaseSet();
+            }
+
+            _liftSets = new Stack<LiftSet>();
+            _pulledWeightStacks = new List<WeightStack>();
+            _sessionWeightStacks = new List<WeightStack>();
+            _weightSetMoves = 0;
+            _barWeight = 0;
+            _usedPlatesCount = 0;
+            _currentTargetIndex = -1;
+            _currentTargetWeight = -1;
+            _targets = new decimal[0];
+        }
+
         public LiftSession(LiftSession session)
         {
             _liftSets = Cloner.Clone(session.LiftSets);
@@ -346,7 +364,7 @@ namespace DontWasteWeight.Components
         /// <param name="setsToRemove">PlateSets to remove</param>
         public void StripPlates(int setsToRemove)
         {
-            if (setsToRemove > 0)
+            if (setsToRemove > 0 && _liftSets.Count > 0)
             {
                 LiftSet newSet = new LiftSet(_liftSets.Peek());
                 List<PlateSet> removedPlateSets = new List<PlateSet>();
