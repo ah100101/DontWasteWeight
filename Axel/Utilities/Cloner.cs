@@ -9,8 +9,17 @@ using System.Threading.Tasks;
 
 namespace Axel.Utilities
 {
+    /// <summary>
+    /// Cloner utility class. Clones object and associated members
+    /// </summary>
     public static class Cloner
     {
+        /// <summary>
+        /// Clones source object. Type must be serializable.
+        /// </summary>
+        /// <typeparam name="T">class type being cloned</typeparam>
+        /// <param name="source">object to clone</param>
+        /// <returns>new cloned object</returns>
         public static T Clone<T>(T source)
         {
             if (!typeof(T).IsSerializable)

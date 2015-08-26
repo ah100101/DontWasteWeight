@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace DontWasteWeight.Components
 {
+    //TODO: Revisit Expand() method for catching when we have gone past the target weight (which causes search to spin out when an impossible target weight is entered)
+    /// <summary>
+    /// Class that gets expanded for searching. Implements IBestFirstSearchable and IComparable
+    /// </summary>
     [Serializable]
     public class LiftSession : IBestFirstSearchable<LiftSession>
     {
@@ -27,6 +31,9 @@ namespace DontWasteWeight.Components
 
         #region Constants
 
+        /// <summary>
+        /// Used for creating unique scaling value (obsolete)
+        /// </summary>
         private const int MaximumFinalIndexDelta = 49;
         private const int MaximumWeightDelta = 699;
         private const int MaximumMoves = 99;
@@ -37,6 +44,9 @@ namespace DontWasteWeight.Components
 
         #region Properties
 
+        /// <summary>
+        /// Target weights to hit.
+        /// </summary>
         public decimal[] Targets
         {
             get
@@ -49,6 +59,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Current weight being searched for
+        /// </summary>
         public decimal CurrentTargetWeight
         {
             get
@@ -61,6 +74,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Current target index being searched for
+        /// </summary>
         public int CurrentTargetIndex
         {
             get
@@ -73,6 +89,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Total number of plates pulled from session stack
+        /// </summary>
         public int UsedPlatesCount
         {
             get
@@ -85,6 +104,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Stack of weights that can be pulled from to load the bar
+        /// </summary>
         public List<WeightStack> PulledWeightStacks
         {
             get
@@ -97,6 +119,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Total available weights. Pulled fro to load Pulled weight stack
+        /// </summary>
         public List<WeightStack> SessionWeightStacks
         {
             get
@@ -109,6 +134,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Weight of bar
+        /// </summary>
         public decimal BarWeight
         {
             get
@@ -121,6 +149,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Stack that tracks the lifting sets we have passed
+        /// </summary>
         public Stack<LiftSet> LiftSets
         {
             get
@@ -133,6 +164,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Number of times weight has been loaded or unloaded
+        /// </summary>
         public int WeightSetMoves
         {
             get
@@ -149,16 +183,48 @@ namespace DontWasteWeight.Components
 
         #region Constructors
 
+        /// <summary>
+        /// Constructs default LiftSession
+        /// </summary>
         public LiftSession()
         {
             _liftSets = new Stack<LiftSet>();
             _pulledWeightStacks = new List<WeightStack>();
+            _sessionWeightStacks = new List<WeightStack>();
             _weightSetMoves = 0;
             _barWeight = 0;
             _usedPlatesCount = 0;
             _currentTargetIndex = -1;
+            _currentTargetWeight = -1;
+            _targets = new decimal[0];
         }
 
+        /// <summary>
+        /// Constructs default lift session and first default liftset
+        /// </summary>
+        /// <param name="initialize">true to initialize</param>
+        public LiftSession(bool initialize)
+        {
+            if (initialize)
+            {
+                CreateBaseSet();
+            }
+
+            _liftSets = new Stack<LiftSet>();
+            _pulledWeightStacks = new List<WeightStack>();
+            _sessionWeightStacks = new List<WeightStack>();
+            _weightSetMoves = 0;
+            _barWeight = 0;
+            _usedPlatesCount = 0;
+            _currentTargetIndex = -1;
+            _currentTargetWeight = -1;
+            _targets = new decimal[0];
+        }
+
+        /// <summary>
+        /// Constructs LiftSession from existing LiftSession
+        /// </summary>
+        /// <param name="session">Existing LiftSession</param>
         public LiftSession(LiftSession session)
         {
             _liftSets = Cloner.Clone(session.LiftSets);
@@ -176,6 +242,7 @@ namespace DontWasteWeight.Components
 
         #region Methods
 
+        //TODO: Remove this and add it to constructor
         /// <summary>
         /// Creates initial base LiftSet and adds it to session
         /// </summary>
@@ -343,7 +410,7 @@ namespace DontWasteWeight.Components
         /// <param name="setsToRemove">PlateSets to remove</param>
         public void StripPlates(int setsToRemove)
         {
-            if (setsToRemove > 0)
+            if (setsToRemove > 0 && _liftSets.Count > 0)
             {
                 LiftSet newSet = new LiftSet(_liftSets.Peek());
                 List<PlateSet> removedPlateSets = new List<PlateSet>();
@@ -368,7 +435,12 @@ namespace DontWasteWeight.Components
             }
         }
 
-        internal void UpdateTargetIndex(decimal[] targetSets)
+        //TODO: Remove this and add logic to add & remove plates (maybe expand?)
+        /// <summary>
+        /// Updates the current target being searched for
+        /// </summary>
+        /// <param name="targetSets"></param>
+        public void UpdateTargetIndex(decimal[] targetSets)
         {
             LiftSet currentLiftSet = new LiftSet(this.LiftSets.Peek());
             if (currentLiftSet != null && CurrentTargetIndex < targetSets.Length - 1)
@@ -385,14 +457,26 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Weight difference between where current LiftSet is and where it needs to be
+        /// </summary>
+        /// <returns></returns>
         internal decimal TargetDifference()
         {
             decimal targetWeight = this.CurrentTargetWeight;
             decimal currentWeight = this._liftSets.Peek().Bar.TotalWeight;
-            decimal weightDifference = Math.Abs(targetWeight - currentWeight);
-            return weightDifference;
+            decimal weightDifference = targetWeight - currentWeight;
+
+            if (weightDifference > 0)
+                return weightDifference;
+            else
+                return 0;
         }
 
+        /// <summary>
+        /// Calculates total number of plates pulled so far
+        /// </summary>
+        /// <returns>Number of plates used (loaded & not loaded)</returns>
         internal int PlateSetsUsed()
         {
             int plateSetsUsed = 0;
@@ -415,6 +499,10 @@ namespace DontWasteWeight.Components
             return plateSetsUsed;
         }
 
+        /// <summary>
+        /// Number of LiftSets away from solution
+        /// </summary>
+        /// <returns>Set away from solution</returns>
         internal int DistanceToFinalIndex()
         {
             int delta = (_targets.Count() - 1) - CurrentTargetIndex;
@@ -426,10 +514,60 @@ namespace DontWasteWeight.Components
         #region Interface Members
 
         /// <summary>
-        /// Cost of initial node to n (current node)
+        /// Cost of initial node to n (current node). Number of plate sets used.
         /// </summary>
         /// <returns>decimal</returns>
         public decimal Gn()
+        {
+            return PlateSetsUsed();
+        }
+
+        /// <summary>
+        /// Cost of getting from n to final node. Approximate number of plate sets to still be used
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal Hn()
+        {
+            //initialize value very high to avoid making session appear at top of heap
+            decimal approxPlateSetsToUse = 1000;
+
+            //set the approximate weight to add to the difference to the next target
+            decimal approxTotalWeightToAdd = TargetDifference();
+
+            //only want to compute deltas between targets if we are more than 1 away from the end
+            if (CurrentTargetIndex < Targets.Count() - 1)
+            {
+                //for each target weight, starting with the current compute delta
+                for (int i = CurrentTargetIndex; i < Targets.Count() - 1; i++)
+                {
+                    decimal currentTargetWeight = Targets[i];
+                    decimal nextTargetWeight = Targets[i + 1];
+
+                    //add delta to the approximate total weight to add
+                    approxTotalWeightToAdd = approxTotalWeightToAdd + Math.Abs(currentTargetWeight - nextTargetWeight);
+                }
+            }
+
+            //get the largest plateset at our disposal
+            WeightStack lightestWeightStack = SessionWeightStacks.OrderByDescending(p => p.Weight).LastOrDefault();
+
+            if (lightestWeightStack != null)
+            {
+                //double the weight of that plate so we can get the weight of a plateset at that weight
+                decimal lightestPlateSetWeight = 2 * lightestWeightStack.Weight;
+
+                //divide the approximate total by the plateset weight for the estimated number of plates to be used
+                approxPlateSetsToUse = approxTotalWeightToAdd / lightestPlateSetWeight;
+            }
+
+            return approxPlateSetsToUse;
+        }
+
+        /// <summary>
+        /// Cost of initial node to n (current node)
+        /// </summary>
+        /// <returns>decimal</returns>
+        public decimal GnByPlatesAndMoves()
         {
             //gn = c(max(d) + 1) + d
             decimal cost = (MaximumPlateSets * (MaximumMoves + 1)) + MaximumMoves;
@@ -443,28 +581,28 @@ namespace DontWasteWeight.Components
         /// Cost of getting from n to final node
         /// </summary>
         /// <returns>decimal</returns>
-        public decimal Hn()
+        public decimal HnByWeightIndexDifference()
         {
             //hn = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1)
             decimal cost = (MaximumFinalIndexDelta * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
                         + MaximumWeightDelta * (MaximumPlateSets + 1) * (MaximumMoves + 1);
 
-            decimal targetWeightDifference = TargetDifference();
-            decimal distanceToTargetIndex = DistanceToFinalIndex();
+        decimal targetWeightDifference = TargetDifference();
+        decimal distanceToTargetIndex = DistanceToFinalIndex();
 
-            cost = (distanceToTargetIndex * (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
-                        + targetWeightDifference * (MaximumPlateSets + 1) * (MaximumMoves + 1);
+        cost = (distanceToTargetIndex* (MaximumWeightDelta + 1) * (MaximumPlateSets + 1) * (MaximumMoves + 1))
+                        + targetWeightDifference* (MaximumPlateSets + 1) * (MaximumMoves + 1);
 
             return cost;
         }
 
-        /// <summary>
-        /// Returns fn to determine best node.
-        /// f(n) = h(n) + g(n) OR
-        /// f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
-        /// </summary>
-        /// <returns>decimal</returns>
-        public decimal Fn()
+    /// <summary>
+    /// Returns fn to determine best node.
+    /// f(n) = h(n) + g(n) OR
+    /// f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
+    /// </summary>
+    /// <returns>decimal</returns>
+    public decimal Fn()
         {
             //f(n) = a(max(b) + 1)(max(c) + 1)(max(d) + 1) + b(max(c) + 1)(max(d) + 1) + c(max(d) + 1) + d
             decimal val = Hn() + Gn();
