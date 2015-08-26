@@ -1,0 +1,9 @@
+C:\ah100101\apps\DontWasteWeight\WeightTests\bin\Debug\WeightTests.dll
+C:\ah100101\apps\DontWasteWeight\WeightTests\bin\Debug\WeightTests.pdb
+C:\ah100101\apps\DontWasteWeight\WeightTests\obj\Debug\WeightTests.csprojResolveAssemblyReference.cache
+C:\ah100101\apps\DontWasteWeight\WeightTests\obj\Debug\WeightTests.dll
+C:\ah100101\apps\DontWasteWeight\WeightTests\obj\Debug\WeightTests.pdb
+C:\ah100101\apps\DontWasteWeight\WeightTests\bin\Debug\DontWasteWeight.exe
+C:\ah100101\apps\DontWasteWeight\WeightTests\bin\Debug\Axel.dll
+C:\ah100101\apps\DontWasteWeight\WeightTests\bin\Debug\DontWasteWeight.pdb
+C:\ah100101\apps\DontWasteWeight\WeightTests\bin\Debug\Axel.pdb

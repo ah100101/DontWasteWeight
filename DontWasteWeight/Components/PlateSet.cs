@@ -69,6 +69,19 @@ namespace DontWasteWeight.Components
             this._totalWeight = plateSet.TotalWeight;
         }
 
+        public PlateSet(int weight)
+        {
+            Plate[] plates
+                        = new Plate[]{
+                                        new Plate(){ Weight = weight },
+                                        new Plate(){ Weight = weight }
+                                    };
+
+            Plates = plates;
+            TotalWeight = weight + weight;
+            Weight = weight;
+        }
+
         #endregion
 
         #region Methods

@@ -26,6 +26,14 @@ namespace DontWasteWeight.Components
             }
         }
 
+        public decimal TotalWeight
+        {
+            get
+            {
+                return _bar.TotalWeight;
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -42,16 +50,21 @@ namespace DontWasteWeight.Components
 
         #endregion
 
-        internal void AddPlateSetToBar(PlateSet plateSet)
+        public void AddPlateSetToBar(PlateSet plateSet)
         {
             _bar.AddPlateSet(plateSet);
         }
 
-        internal bool CanRemovePlates()
+        public bool CanRemovePlates()
         {
             if (_bar != null && _bar.LoadedPlates != null && _bar.LoadedPlates.Count > 0)
                 return true;
             return false;
+        }
+
+        public void RemovePlates(int setsToRemove)
+        {
+            Bar.RemovePlates(setsToRemove);
         }
     }
 }
