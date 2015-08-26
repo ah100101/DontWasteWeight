@@ -11,7 +11,7 @@ namespace Axel.Algorithms.Search.Generic
 {
     // Summary:
     //      Represents a variable size Best First Search (A* Search) Algorithm for finding best path to solution element
-    //
+    //      Solution found by evaluating f(n) = h(n) + g(n) or (distance from start) + (est. distance to target)
     // Type parameters:
     //   T:
     //     Specifies the type of elements in the stack. Must implement IBestFirstSearchable
@@ -145,7 +145,7 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                return _binaryheap.Peak();
+                return _binaryheap.Peek();
             }
         }
 
@@ -193,7 +193,7 @@ namespace Axel.Algorithms.Search.Generic
                 {
                     //if there are no equivalent nodes in history, add it to binary heap
                     if(!_history.Any<T>(item => item.IsEquivalentNode(expandedNode)))
-                        _binaryheap.Insert(expandedNode);
+                        _binaryheap.Push(expandedNode);
                 }
             }
         }
@@ -267,7 +267,7 @@ namespace Axel.Algorithms.Search.Generic
             _origin = origin;
             _solved = false;
             _binaryheap = new BinaryHeap<T>();
-            _binaryheap.Insert(_origin);
+            _binaryheap.Push(_origin);
             _history = new List<T>();
         }
 

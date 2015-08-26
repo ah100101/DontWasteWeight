@@ -6,15 +6,26 @@ using System.Threading.Tasks;
 
 namespace DontWasteWeight.Components
 {
+    //TODO: Place all bar members and methods on this class. Unclutter the hiearchy
+    /// <summary>
+    /// Comprised of two plates. PlateSets are added to a Bar to increase its total weight.
+    /// </summary>
     [Serializable]
     public class PlateSet
     {
+        #region Members
+
         private Plate[] _plates;
         private decimal _weight;
         private decimal _totalWeight;
 
+        #endregion
+
         #region Properties
 
+        /// <summary>
+        /// Array of plates (always 2)
+        /// </summary>
         public Plate[] Plates
         {
             get
@@ -27,6 +38,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Total weight of PlateSet (Plate + Plate). Total added to Bar for TotalWeight
+        /// </summary>
         public decimal TotalWeight
         {
             get
@@ -39,6 +53,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Identifying weight of PlateSet. Weight = 45, TotalWeight = 90.
+        /// </summary>
         public decimal Weight
         {
             get
@@ -55,6 +72,9 @@ namespace DontWasteWeight.Components
 
         #region Constructors
 
+        /// <summary>
+        /// Constructs empty PlateSet
+        /// </summary>
         public PlateSet()
         {
             _plates = new Plate[0];
@@ -62,6 +82,10 @@ namespace DontWasteWeight.Components
             _weight = 0;
         }
 
+        /// <summary>
+        /// Constructrs PlateSet from existing
+        /// </summary>
+        /// <param name="plateSet">Existing PlateSet</param>
         public PlateSet(PlateSet plateSet)
         {
             this._plates = plateSet.Plates;
@@ -69,6 +93,10 @@ namespace DontWasteWeight.Components
             this._totalWeight = plateSet.TotalWeight;
         }
 
+        /// <summary>
+        /// Constructs PlateSet from an identifying Weight. Creates 2 plate with this weight.
+        /// </summary>
+        /// <param name="weight">Identifying weight</param>
         public PlateSet(int weight)
         {
             Plate[] plates
@@ -86,22 +114,23 @@ namespace DontWasteWeight.Components
 
         #region Methods
 
+        //TODO: Remove this, as this was a hotfix for different issues
+        /// <summary>
+        /// Creates plates in case they were already added
+        /// </summary>
+        /// <param name="dec">Identifying weight</param>
         internal void InitializePlates(decimal dec)
         {
-            
-            if(dec != null)
-            {
-                _weight = dec;
-                _totalWeight = _weight + _weight;
+            _weight = dec;
+            _totalWeight = _weight + _weight;
 
-                Plate[] plates
-                        = new Plate[]{ 
-                                        new Plate(){ Weight = dec }, 
-                                        new Plate(){ Weight = dec }
-                                    };
+            Plate[] plates
+                    = new Plate[]{ 
+                                    new Plate(){ Weight = dec }, 
+                                    new Plate(){ Weight = dec }
+                                };
 
-                _plates = plates;
-            }
+            _plates = plates;
         }
 
         #endregion

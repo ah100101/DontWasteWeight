@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Axel.Data.Search
 {
     /// <summary>
-    /// Interface for node objects in best first search. Must be serializable.
+    /// Interface for node objects being searched via best first search. Must be serializable.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IBestFirstSearchable<T> : IComparable

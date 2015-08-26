@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace DontWasteWeight.Components
 {
+    //TODO: Revisit Expand() method for catching when we have gone past the target weight (which causes search to spin out when an impossible target weight is entered)
+    /// <summary>
+    /// Class that gets expanded for searching. Implements IBestFirstSearchable and IComparable
+    /// </summary>
     [Serializable]
     public class LiftSession : IBestFirstSearchable<LiftSession>
     {
@@ -27,6 +31,9 @@ namespace DontWasteWeight.Components
 
         #region Constants
 
+        /// <summary>
+        /// Used for creating unique scaling value (obsolete)
+        /// </summary>
         private const int MaximumFinalIndexDelta = 49;
         private const int MaximumWeightDelta = 699;
         private const int MaximumMoves = 99;
@@ -37,6 +44,9 @@ namespace DontWasteWeight.Components
 
         #region Properties
 
+        /// <summary>
+        /// Target weights to hit.
+        /// </summary>
         public decimal[] Targets
         {
             get
@@ -49,6 +59,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Current weight being searched for
+        /// </summary>
         public decimal CurrentTargetWeight
         {
             get
@@ -61,6 +74,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Current target index being searched for
+        /// </summary>
         public int CurrentTargetIndex
         {
             get
@@ -73,6 +89,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Total number of plates pulled from session stack
+        /// </summary>
         public int UsedPlatesCount
         {
             get
@@ -85,6 +104,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Stack of weights that can be pulled from to load the bar
+        /// </summary>
         public List<WeightStack> PulledWeightStacks
         {
             get
@@ -97,6 +119,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Total available weights. Pulled fro to load Pulled weight stack
+        /// </summary>
         public List<WeightStack> SessionWeightStacks
         {
             get
@@ -109,6 +134,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Weight of bar
+        /// </summary>
         public decimal BarWeight
         {
             get
@@ -121,6 +149,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Stack that tracks the lifting sets we have passed
+        /// </summary>
         public Stack<LiftSet> LiftSets
         {
             get
@@ -133,6 +164,9 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Number of times weight has been loaded or unloaded
+        /// </summary>
         public int WeightSetMoves
         {
             get
@@ -149,6 +183,9 @@ namespace DontWasteWeight.Components
 
         #region Constructors
 
+        /// <summary>
+        /// Constructs default LiftSession
+        /// </summary>
         public LiftSession()
         {
             _liftSets = new Stack<LiftSet>();
@@ -162,6 +199,10 @@ namespace DontWasteWeight.Components
             _targets = new decimal[0];
         }
 
+        /// <summary>
+        /// Constructs default lift session and first default liftset
+        /// </summary>
+        /// <param name="initialize">true to initialize</param>
         public LiftSession(bool initialize)
         {
             if (initialize)
@@ -180,6 +221,10 @@ namespace DontWasteWeight.Components
             _targets = new decimal[0];
         }
 
+        /// <summary>
+        /// Constructs LiftSession from existing LiftSession
+        /// </summary>
+        /// <param name="session">Existing LiftSession</param>
         public LiftSession(LiftSession session)
         {
             _liftSets = Cloner.Clone(session.LiftSets);
@@ -197,6 +242,7 @@ namespace DontWasteWeight.Components
 
         #region Methods
 
+        //TODO: Remove this and add it to constructor
         /// <summary>
         /// Creates initial base LiftSet and adds it to session
         /// </summary>
@@ -389,6 +435,11 @@ namespace DontWasteWeight.Components
             }
         }
 
+        //TODO: Remove this and add logic to add & remove plates (maybe expand?)
+        /// <summary>
+        /// Updates the current target being searched for
+        /// </summary>
+        /// <param name="targetSets"></param>
         public void UpdateTargetIndex(decimal[] targetSets)
         {
             LiftSet currentLiftSet = new LiftSet(this.LiftSets.Peek());
@@ -406,6 +457,10 @@ namespace DontWasteWeight.Components
             }
         }
 
+        /// <summary>
+        /// Weight difference between where current LiftSet is and where it needs to be
+        /// </summary>
+        /// <returns></returns>
         internal decimal TargetDifference()
         {
             decimal targetWeight = this.CurrentTargetWeight;
@@ -418,6 +473,10 @@ namespace DontWasteWeight.Components
                 return 0;
         }
 
+        /// <summary>
+        /// Calculates total number of plates pulled so far
+        /// </summary>
+        /// <returns>Number of plates used (loaded & not loaded)</returns>
         internal int PlateSetsUsed()
         {
             int plateSetsUsed = 0;
@@ -440,6 +499,10 @@ namespace DontWasteWeight.Components
             return plateSetsUsed;
         }
 
+        /// <summary>
+        /// Number of LiftSets away from solution
+        /// </summary>
+        /// <returns>Set away from solution</returns>
         internal int DistanceToFinalIndex()
         {
             int delta = (_targets.Count() - 1) - CurrentTargetIndex;
