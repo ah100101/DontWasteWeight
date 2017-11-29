@@ -59,9 +59,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Axel\Axel.csproj">
+    <ProjectReference Include="..\DontWasteWeight.Core\DontWasteWeight.Core.csproj">
       <Project>{73c0a723-3f04-45d9-a8e0-fa3725d78f95}</Project>
-      <Name>Axel</Name>
+      <Name>DontWasteWeight.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\DontWasteWeight\DontWasteWeight.csproj">
       <Project>{6ab1aef6-0450-4536-b3c8-31370d3cd6be}</Project>

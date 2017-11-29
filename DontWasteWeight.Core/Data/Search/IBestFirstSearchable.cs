@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Axel.Data.Search
+namespace DontWasteWeight.Core.Data.Search
 {
     /// <summary>
     /// Interface for node objects being searched via best first search. Must be serializable.

@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Axel.Utilities
+namespace DontWasteWeight.Core.Utilities
 {
     /// <summary>
     /// Cloner utility class. Clones object and associated members

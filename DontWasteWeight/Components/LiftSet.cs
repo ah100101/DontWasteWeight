@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Axel.Utilities;
+using DontWasteWeight.Core.Utilities;
 
 namespace DontWasteWeight.Components
 {
     [Serializable]
     public class LiftSet
     {
-        private Bar _bar;
+        private Bar bar;
 
         #region Properties
 
@@ -21,11 +21,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _bar;
+                return bar;
             }
             set
             {
-                _bar = value;
+                bar = value;
             }
         }
 
@@ -36,7 +36,7 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _bar.TotalWeight;
+                return bar.TotalWeight;
             }
         }
 
@@ -49,7 +49,7 @@ namespace DontWasteWeight.Components
         /// </summary>
         public LiftSet()
         {
-            _bar = new Bar();
+            bar = new Bar();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace DontWasteWeight.Components
         /// <param name="liftSet">Existing LiftSet</param>
         public LiftSet(LiftSet liftSet)
         {
-            this._bar = Cloner.Clone(liftSet.Bar);
+            this.bar = Cloner.Clone(liftSet.Bar);
         }
 
         #endregion
@@ -69,7 +69,7 @@ namespace DontWasteWeight.Components
         /// <param name="plateSet">PlateSet to load</param>
         public void AddPlateSetToBar(PlateSet plateSet)
         {
-            _bar.AddPlateSet(plateSet);
+            bar.AddPlateSet(plateSet);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace DontWasteWeight.Components
         /// <returns>True if Bar has loaded plates</returns>
         public bool CanRemovePlates()
         {
-            if (_bar != null && _bar.LoadedPlates != null && _bar.LoadedPlates.Count > 0)
+            if (bar != null && bar.LoadedPlates != null && bar.LoadedPlates.Count > 0)
                 return true;
             return false;
         }

@@ -4,30 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Axel.Data.Structures;
-using Axel.Data.Search;
-using Axel.Algorithms.Search.Generic;
-using Axel.Utilities;
+using DontWasteWeight.Core.Data.Structures;
+using DontWasteWeight.Core.Data.Search;
+using DontWasteWeight.Core.Algorithms.Search.Generic;
+using DontWasteWeight.Core.Utilities;
 
 namespace DontWasteWeight
 {
-    /*
-        Scenario Model:
-
-        LiftSession - implements IBestFirstSearchable. 1 LiftSession is 1 node, which gets expanded (next possible nodes found) for finding solution
-            + LiftSets (Stack of LiftSet)
-                ++ LiftSet - Represents a single valid lifting state. i.e. 45# bar with 45s on each side (135# total). Every time we add or remove weights, we create a new LiftSet
-                    +++ Bar - Keeps track of the weight of the bar, and the current total weight being lifted (Bar weight + Loaded PlateSet(s) weight)
-                        ++++ LoadedPlates (Stack of PlateSets) PlateSets currently loaded on bar (not on ground next to)
-                            +++++ PlateSet - Always consists of 2 Plates. Only PlateSets are added or removed (i.e. a single plate can't be added). 
-                                                ID'd by their weight 45 = total weight of 90
-                                ++++++ Plate - Singular plate that only has a weight associated to it. 2, and only 2, of these comprise a PlateSet
-            + SessionWeightStack - A stack of weights that the "gym" has available for use. We pop from this when we put weights (PlateSets) on the bar
-            + PulledWeightStack - The stack of weights that represents what we have pulled from the gym's supply to our area.
-
-    */
-
-    //class that just runs a test of the search
+    // Class that just runs a scenario of the search
     class Program
     {
         static void Main(string[] args)

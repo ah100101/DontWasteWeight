@@ -15,7 +15,7 @@ namespace DontWasteWeight.Components
     {
         #region Members
 
-        private decimal _weight;
+        private decimal weight;
 
         #endregion
 
@@ -28,11 +28,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _weight;
+                return weight;
             }
             set
             {
-                _weight = value;
+                weight = value;
             }
         }
 
@@ -45,7 +45,7 @@ namespace DontWasteWeight.Components
         /// </summary>
         public Plate()
         {
-            _weight = 0;
+            weight = 0;
         }
 
         #endregion

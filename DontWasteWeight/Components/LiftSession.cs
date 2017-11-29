@@ -1,5 +1,5 @@
-﻿using Axel.Data.Search;
-using Axel.Utilities;
+﻿using DontWasteWeight.Core.Data.Search;
+using DontWasteWeight.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,15 +17,15 @@ namespace DontWasteWeight.Components
     {
         #region Members
 
-        private Stack<LiftSet> _liftSets;
-        private List<WeightStack> _sessionWeightStacks;
-        private List<WeightStack> _pulledWeightStacks;
-        private int _weightSetMoves;
-        private int _usedPlatesCount;
-        private int _currentTargetIndex;
-        private decimal _currentTargetWeight;
-        private decimal _barWeight;
-        private decimal[] _targets;
+        private Stack<LiftSet> liftSets;
+        private List<WeightStack> sessionWeightStacks;
+        private List<WeightStack> pulledWeightStacks;
+        private int weightSetMoves;
+        private int usedPlatesCount;
+        private int currentTargetIndex;
+        private decimal currentTargetWeight;
+        private decimal barWeight;
+        private decimal[] targets;
 
         #endregion
 
@@ -51,11 +51,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _targets;
+                return targets;
             }
             set
             {
-                _targets = value;
+                targets = value;
             }
         }
 
@@ -66,11 +66,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _currentTargetWeight;
+                return currentTargetWeight;
             }
             set
             {
-                _currentTargetWeight = value;
+                currentTargetWeight = value;
             }
         }
 
@@ -81,11 +81,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _currentTargetIndex;
+                return currentTargetIndex;
             }
             set
             {
-                _currentTargetIndex = value;
+                currentTargetIndex = value;
             }
         }
 
@@ -96,11 +96,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _usedPlatesCount;
+                return usedPlatesCount;
             }
             set
             {
-                _usedPlatesCount = value;
+                usedPlatesCount = value;
             }
         }
 
@@ -111,11 +111,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _pulledWeightStacks;
+                return pulledWeightStacks;
             }
             set
             {
-                _pulledWeightStacks = value;
+                pulledWeightStacks = value;
             }
         }
 
@@ -126,11 +126,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _sessionWeightStacks;
+                return sessionWeightStacks;
             }
             set
             {
-                _sessionWeightStacks = value;
+                sessionWeightStacks = value;
             }
         }
 
@@ -141,11 +141,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _barWeight;
+                return barWeight;
             }
             set
             {
-                _barWeight = value;
+                barWeight = value;
             }
         }
 
@@ -156,11 +156,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _liftSets;
+                return liftSets;
             }
             set
             {
-                _liftSets = value;
+                liftSets = value;
             }
         }
 
@@ -171,11 +171,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _weightSetMoves;
+                return weightSetMoves;
             }
             set
             {
-                _weightSetMoves = value;
+                weightSetMoves = value;
             }
         }
 
@@ -188,15 +188,15 @@ namespace DontWasteWeight.Components
         /// </summary>
         public LiftSession()
         {
-            _liftSets = new Stack<LiftSet>();
-            _pulledWeightStacks = new List<WeightStack>();
-            _sessionWeightStacks = new List<WeightStack>();
-            _weightSetMoves = 0;
-            _barWeight = 0;
-            _usedPlatesCount = 0;
-            _currentTargetIndex = -1;
-            _currentTargetWeight = -1;
-            _targets = new decimal[0];
+            liftSets = new Stack<LiftSet>();
+            pulledWeightStacks = new List<WeightStack>();
+            sessionWeightStacks = new List<WeightStack>();
+            weightSetMoves = 0;
+            barWeight = 0;
+            usedPlatesCount = 0;
+            currentTargetIndex = -1;
+            currentTargetWeight = -1;
+            targets = new decimal[0];
         }
 
         /// <summary>
@@ -210,15 +210,15 @@ namespace DontWasteWeight.Components
                 CreateBaseSet();
             }
 
-            _liftSets = new Stack<LiftSet>();
-            _pulledWeightStacks = new List<WeightStack>();
-            _sessionWeightStacks = new List<WeightStack>();
-            _weightSetMoves = 0;
-            _barWeight = 0;
-            _usedPlatesCount = 0;
-            _currentTargetIndex = -1;
-            _currentTargetWeight = -1;
-            _targets = new decimal[0];
+            liftSets = new Stack<LiftSet>();
+            pulledWeightStacks = new List<WeightStack>();
+            sessionWeightStacks = new List<WeightStack>();
+            weightSetMoves = 0;
+            barWeight = 0;
+            usedPlatesCount = 0;
+            currentTargetIndex = -1;
+            currentTargetWeight = -1;
+            targets = new decimal[0];
         }
 
         /// <summary>
@@ -227,15 +227,15 @@ namespace DontWasteWeight.Components
         /// <param name="session">Existing LiftSession</param>
         public LiftSession(LiftSession session)
         {
-            _liftSets = Cloner.Clone(session.LiftSets);
-            _barWeight = session.BarWeight;
-            _currentTargetIndex = session.CurrentTargetIndex;
-            _currentTargetWeight = session.CurrentTargetWeight;
-            _pulledWeightStacks = Cloner.Clone(session.PulledWeightStacks);
-            _sessionWeightStacks = Cloner.Clone(session.SessionWeightStacks);
-            _usedPlatesCount = session.UsedPlatesCount;
-            _weightSetMoves = session.WeightSetMoves;
-            _targets = session.Targets;
+            liftSets = Cloner.Clone(session.LiftSets);
+            barWeight = session.BarWeight;
+            currentTargetIndex = session.CurrentTargetIndex;
+            currentTargetWeight = session.CurrentTargetWeight;
+            pulledWeightStacks = Cloner.Clone(session.PulledWeightStacks);
+            sessionWeightStacks = Cloner.Clone(session.SessionWeightStacks);
+            usedPlatesCount = session.UsedPlatesCount;
+            weightSetMoves = session.WeightSetMoves;
+            targets = session.Targets;
         }
 
         #endregion
@@ -249,7 +249,7 @@ namespace DontWasteWeight.Components
         public void CreateBaseSet()
         {
             LiftSet baseLiftSet = new LiftSet();
-            baseLiftSet.Bar.BarWeight = _barWeight;
+            baseLiftSet.Bar.BarWeight = barWeight;
             baseLiftSet.Bar.TotalWeight = baseLiftSet.Bar.BarWeight;
             LiftSets.Push(baseLiftSet);
         }
@@ -270,12 +270,12 @@ namespace DontWasteWeight.Components
             {
                 PlateSet newPlateSet = GetPlateSetFromPulledStack(plateSet);
 
-                if(_liftSets != null && _liftSets.Count > 0)
+                if(liftSets != null && liftSets.Count > 0)
                 {
-                    LiftSet newLiftSet = new LiftSet(_liftSets.Peek());
+                    LiftSet newLiftSet = new LiftSet(liftSets.Peek());
                     newLiftSet.AddPlateSetToBar(plateSet);
-                    _liftSets.Push(newLiftSet);
-                    _weightSetMoves++;
+                    liftSets.Push(newLiftSet);
+                    weightSetMoves++;
                 }
             }
         }
@@ -286,7 +286,7 @@ namespace DontWasteWeight.Components
         /// <returns>true if plates can be added</returns>
         public bool CanAddPlates()
         {
-            if (_sessionWeightStacks.Any(ws => ws.Plates.Count > 0))
+            if (sessionWeightStacks.Any(ws => ws.Plates.Count > 0))
                 return true;
 
             return false;
@@ -312,7 +312,7 @@ namespace DontWasteWeight.Components
         /// <returns></returns>
         private PlateSet GetPlateSetFromPulledStack(PlateSet neededPlateSet)
         {
-            PlateSet pulledPlateSet = new PlateSet(_pulledWeightStacks.FirstOrDefault(s => s.Weight == neededPlateSet.Weight).Plates.Pop());
+            PlateSet pulledPlateSet = new PlateSet(pulledWeightStacks.FirstOrDefault(s => s.Weight == neededPlateSet.Weight).Plates.Pop());
             return pulledPlateSet;
         }
 
@@ -323,7 +323,7 @@ namespace DontWasteWeight.Components
         /// <returns></returns>
         private PlateSet GetPlateSetFromSessionStack(PlateSet neededPlateSet)
         {
-            PlateSet sessionPlateSet = new PlateSet(_sessionWeightStacks.FirstOrDefault(s => s.Weight == neededPlateSet.Weight).Plates.Pop());
+            PlateSet sessionPlateSet = new PlateSet(sessionWeightStacks.FirstOrDefault(s => s.Weight == neededPlateSet.Weight).Plates.Pop());
             return sessionPlateSet;
         }
 
@@ -333,16 +333,16 @@ namespace DontWasteWeight.Components
         /// <param name="plateSet"></param>
         private void AddToPulledPlateStack(PlateSet plateSet)
         {
-            WeightStack stack = _pulledWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight);
+            WeightStack stack = pulledWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight);
 
             if (stack == null)
             {
                 WeightStack neededStack = new WeightStack(plateSet.Weight, 1);
-                _pulledWeightStacks.Add(new WeightStack(neededStack));
+                pulledWeightStacks.Add(new WeightStack(neededStack));
             }
 
-            _pulledWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight).Plates.Push(GetPlateSetFromSessionStack(plateSet));
-            _usedPlatesCount = _usedPlatesCount + 2;
+            pulledWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight).Plates.Push(GetPlateSetFromSessionStack(plateSet));
+            usedPlatesCount = usedPlatesCount + 2;
         }
 
         /// <summary>
@@ -352,9 +352,9 @@ namespace DontWasteWeight.Components
         /// <returns>true if PlateSet is available in PulledStack</returns>
         private bool PulledPlatesAvailable(PlateSet plateSet)
         {
-            if (_pulledWeightStacks != null && _pulledWeightStacks.Count > 0)
+            if (pulledWeightStacks != null && pulledWeightStacks.Count > 0)
             {
-                WeightStack stack = _pulledWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight);
+                WeightStack stack = pulledWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight);
 
                 if (stack != null)
                 {
@@ -374,9 +374,9 @@ namespace DontWasteWeight.Components
         /// <returns>true if PlateSet is available</returns>
         private bool SessionPlatesAvailable(PlateSet plateSet)
         {
-            if (_sessionWeightStacks != null && _sessionWeightStacks.Count > 0)
+            if (sessionWeightStacks != null && sessionWeightStacks.Count > 0)
             {
-                WeightStack stack = _sessionWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight);
+                WeightStack stack = sessionWeightStacks.FirstOrDefault(s => s.Weight == plateSet.Weight);
 
                 if (stack != null)
                 {
@@ -396,9 +396,9 @@ namespace DontWasteWeight.Components
         /// <returns>true if plates can be removed safely</returns>
         public bool CanRemovePlates()
         {
-            if (_liftSets != null
-                && _liftSets.Count > 0
-                && _liftSets.Peek().Bar.LoadedPlates.Count > 0)
+            if (liftSets != null
+                && liftSets.Count > 0
+                && liftSets.Peek().Bar.LoadedPlates.Count > 0)
                 return true;
 
             return false;
@@ -410,21 +410,21 @@ namespace DontWasteWeight.Components
         /// <param name="setsToRemove">PlateSets to remove</param>
         public void StripPlates(int setsToRemove)
         {
-            if (setsToRemove > 0 && _liftSets.Count > 0)
+            if (setsToRemove > 0 && liftSets.Count > 0)
             {
-                LiftSet newSet = new LiftSet(_liftSets.Peek());
+                LiftSet newSet = new LiftSet(liftSets.Peek());
                 List<PlateSet> removedPlateSets = new List<PlateSet>();
 
                 removedPlateSets = newSet.Bar.RemovePlates(setsToRemove);
 
-                _liftSets.Push(newSet);
-                _weightSetMoves++;
+                liftSets.Push(newSet);
+                weightSetMoves++;
 
                 if (removedPlateSets != null && removedPlateSets.Count > 0)
                 {
                     foreach (PlateSet removedPlateSet in removedPlateSets)
                     {
-                        WeightStack stackAddingTo = _pulledWeightStacks.FirstOrDefault(p => p.Weight == removedPlateSet.Weight);
+                        WeightStack stackAddingTo = pulledWeightStacks.FirstOrDefault(p => p.Weight == removedPlateSet.Weight);
 
                         if (stackAddingTo != null)
                         {
@@ -464,7 +464,7 @@ namespace DontWasteWeight.Components
         internal decimal TargetDifference()
         {
             decimal targetWeight = this.CurrentTargetWeight;
-            decimal currentWeight = this._liftSets.Peek().Bar.TotalWeight;
+            decimal currentWeight = this.liftSets.Peek().Bar.TotalWeight;
             decimal weightDifference = targetWeight - currentWeight;
 
             if (weightDifference > 0)
@@ -505,7 +505,7 @@ namespace DontWasteWeight.Components
         /// <returns>Set away from solution</returns>
         internal int DistanceToFinalIndex()
         {
-            int delta = (_targets.Count() - 1) - CurrentTargetIndex;
+            int delta = (targets.Count() - 1) - CurrentTargetIndex;
             return delta;
         }
 
@@ -636,7 +636,7 @@ namespace DontWasteWeight.Components
                         newSession.AddPlates(plateSetToAdd);
 
                         //update target index that have likely changed
-                        newSession.UpdateTargetIndex(_targets);
+                        newSession.UpdateTargetIndex(targets);
 
                         //add this session into the list
                         expandedSessions.Add(newSession);
@@ -667,7 +667,7 @@ namespace DontWasteWeight.Components
                             newSession.StripPlates(i);
 
                             //update target index that has likely changed
-                            newSession.UpdateTargetIndex(_targets);
+                            newSession.UpdateTargetIndex(targets);
 
                             //add the new session to the list
                             expandedSessions.Add(newSession);

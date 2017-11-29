@@ -1,0 +1,4 @@
+C:\ah100101\applications\DontWasteWeight\Axel\bin\Debug\DontWasteWeight.Core.dll
+C:\ah100101\applications\DontWasteWeight\Axel\bin\Debug\DontWasteWeight.Core.pdb
+C:\ah100101\applications\DontWasteWeight\Axel\obj\Debug\DontWasteWeight.Core.dll
+C:\ah100101\applications\DontWasteWeight\Axel\obj\Debug\DontWasteWeight.Core.pdb

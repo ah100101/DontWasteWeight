@@ -15,9 +15,9 @@ namespace DontWasteWeight.Components
     {
         #region Members
 
-        private Plate[] _plates;
-        private decimal _weight;
-        private decimal _totalWeight;
+        private Plate[] plates;
+        private decimal weight;
+        private decimal totalWeight;
 
         #endregion
 
@@ -30,11 +30,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _plates;
+                return plates;
             }
             set
             {
-                _plates = value;
+                plates = value;
             }
         }
 
@@ -45,11 +45,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _totalWeight;
+                return totalWeight;
             }
             set
             {
-                _totalWeight = value;
+                totalWeight = value;
             }
         }
 
@@ -60,11 +60,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _weight;
+                return weight;
             }
             set
             {
-                _weight = value;
+                weight = value;
             }
         }
 
@@ -77,9 +77,9 @@ namespace DontWasteWeight.Components
         /// </summary>
         public PlateSet()
         {
-            _plates = new Plate[0];
-            _totalWeight = 0;
-            _weight = 0;
+            plates = new Plate[0];
+            totalWeight = 0;
+            weight = 0;
         }
 
         /// <summary>
@@ -88,9 +88,9 @@ namespace DontWasteWeight.Components
         /// <param name="plateSet">Existing PlateSet</param>
         public PlateSet(PlateSet plateSet)
         {
-            this._plates = plateSet.Plates;
-            this._weight = plateSet.Weight;
-            this._totalWeight = plateSet.TotalWeight;
+            this.plates = plateSet.Plates;
+            this.weight = plateSet.Weight;
+            this.totalWeight = plateSet.TotalWeight;
         }
 
         /// <summary>
@@ -121,8 +121,8 @@ namespace DontWasteWeight.Components
         /// <param name="dec">Identifying weight</param>
         internal void InitializePlates(decimal dec)
         {
-            _weight = dec;
-            _totalWeight = _weight + _weight;
+            weight = dec;
+            totalWeight = weight + weight;
 
             Plate[] plates
                     = new Plate[]{ 
@@ -130,7 +130,7 @@ namespace DontWasteWeight.Components
                                     new Plate(){ Weight = dec }
                                 };
 
-            _plates = plates;
+            this.plates = plates;
         }
 
         #endregion

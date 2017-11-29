@@ -22,3 +22,11 @@ C:\ah100101\apps\DontWasteWeight\DontWasteWeight\bin\Debug\DontWasteWeight.pdb
 C:\ah100101\apps\DontWasteWeight\DontWasteWeight\bin\Debug\Axel.dll
 C:\ah100101\apps\DontWasteWeight\DontWasteWeight\bin\Debug\Axel.pdb
 C:\ah100101\apps\DontWasteWeight\DontWasteWeight\obj\Debug\DontWasteWeight.csprojResolveAssemblyReference.cache
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\bin\Debug\DontWasteWeight.exe.config
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\bin\Debug\DontWasteWeight.exe
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\bin\Debug\DontWasteWeight.pdb
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\obj\Debug\DontWasteWeight.csprojResolveAssemblyReference.cache
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\obj\Debug\DontWasteWeight.exe
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\obj\Debug\DontWasteWeight.pdb
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\bin\Debug\DontWasteWeight.Core.dll
+C:\ah100101\applications\DontWasteWeight\DontWasteWeight\bin\Debug\DontWasteWeight.Core.pdb

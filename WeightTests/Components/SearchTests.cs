@@ -2,8 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DontWasteWeight.Components;
 using System.Collections.Generic;
-using Axel.Utilities;
-using Axel.Algorithms.Search.Generic;
+using DontWasteWeight.Core.Utilities;
+using DontWasteWeight.Core.Algorithms.Search.Generic;
 
 namespace WeightTests.Components
 {

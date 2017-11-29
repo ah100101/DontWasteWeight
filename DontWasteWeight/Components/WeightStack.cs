@@ -14,8 +14,8 @@ namespace DontWasteWeight.Components
     {
         #region Members
 
-        private decimal _weight;
-        private Stack<PlateSet> _plates;
+        private decimal weight;
+        private Stack<PlateSet> plates;
 
         #endregion
 
@@ -28,11 +28,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _plates;
+                return plates;
             }
             set
             {
-                _plates = value;
+                plates = value;
             }
         }
 
@@ -43,11 +43,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _weight;
+                return weight;
             }
             set
             {
-                _weight = value;
+                weight = value;
             }
         }
 
@@ -62,8 +62,8 @@ namespace DontWasteWeight.Components
         /// <param name="weightSetCount">Number of PlateSets to add</param>
         public void Fill(decimal weight, int weightSetCount)
         {
-            if (this._plates == null)
-                this._plates = new Stack<PlateSet>();
+            if (this.plates == null)
+                this.plates = new Stack<PlateSet>();
 
             if(weight > 0 && weightSetCount >= 0)
             {
@@ -81,7 +81,7 @@ namespace DontWasteWeight.Components
                     set.Plates = plates;
                     set.TotalWeight = weight + weight;
 
-                    this._plates.Push(set);
+                    this.plates.Push(set);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace DontWasteWeight.Components
         /// </summary>
         public WeightStack()
         {
-            _plates = new Stack<PlateSet>();
+            plates = new Stack<PlateSet>();
         }
 
         /// <summary>
@@ -104,8 +104,8 @@ namespace DontWasteWeight.Components
         /// <param name="weightStack">Existing WeightStack</param>
         public WeightStack(WeightStack weightStack)
         {
-            this._plates = weightStack.Plates;
-            this._weight = weightStack.Weight;
+            this.plates = weightStack.Plates;
+            this.weight = weightStack.Weight;
         }
 
         /// <summary>

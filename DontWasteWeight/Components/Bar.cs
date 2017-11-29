@@ -15,9 +15,9 @@ namespace DontWasteWeight.Components
     {
         #region Members
 
-        private decimal _barWeight;
-        private decimal _totalWeight;
-        private Stack<PlateSet> _loadedPlates;
+        private decimal barWeight;
+        private decimal totalWeight;
+        private Stack<PlateSet> loadedPlates;
 
         #endregion
 
@@ -30,11 +30,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _barWeight;
+                return barWeight;
             }
             set
             {
-                _barWeight = value;
+                barWeight = value;
             }
         }
 
@@ -45,11 +45,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _totalWeight;
+                return totalWeight;
             }
             set
             {
-                _totalWeight = value;
+                totalWeight = value;
             }
         }
 
@@ -60,11 +60,11 @@ namespace DontWasteWeight.Components
         {
             get
             {
-                return _loadedPlates;
+                return loadedPlates;
             }
             set
             {
-                _loadedPlates = value;
+                loadedPlates = value;
             }
         }
 
@@ -77,9 +77,9 @@ namespace DontWasteWeight.Components
         /// </summary>
         public Bar()
         {
-            _barWeight = 0;
-            _totalWeight = 0;
-            _loadedPlates = new Stack<PlateSet>();
+            barWeight = 0;
+            totalWeight = 0;
+            loadedPlates = new Stack<PlateSet>();
         }
 
         /// <summary>
@@ -88,9 +88,9 @@ namespace DontWasteWeight.Components
         /// <param name="weight">Bar Weight</param>
         public Bar(int weight)
         {
-            _barWeight = 45;
-            _totalWeight = 45;
-            _loadedPlates = new Stack<PlateSet>();
+            barWeight = 45;
+            totalWeight = 45;
+            loadedPlates = new Stack<PlateSet>();
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace DontWasteWeight.Components
         /// <param name="bar">Existing Bar</param>
         public Bar(Bar bar)
         {
-            _barWeight = bar.BarWeight;
-            _totalWeight = bar.TotalWeight;
-            _loadedPlates = bar._loadedPlates;
+            barWeight = bar.BarWeight;
+            totalWeight = bar.TotalWeight;
+            loadedPlates = bar.loadedPlates;
         }
 
         #endregion 
@@ -114,9 +114,9 @@ namespace DontWasteWeight.Components
         /// <param name="plateSet">PlateSet to add</param>
         internal void AddPlateSet(PlateSet plateSet)
         {
-            _loadedPlates.Push(plateSet);
+            loadedPlates.Push(plateSet);
 
-            Stack<PlateSet> totalPlates = new Stack<PlateSet>(_loadedPlates);
+            Stack<PlateSet> totalPlates = new Stack<PlateSet>(loadedPlates);
             decimal totalPlateWeight = 0;
 
             while (totalPlates.Count > 0)
@@ -125,7 +125,7 @@ namespace DontWasteWeight.Components
                 totalPlateWeight = totalPlateWeight + set.TotalWeight;
             }
 
-            _totalWeight = totalPlateWeight + _barWeight;
+            totalWeight = totalPlateWeight + barWeight;
         }
 
         /// <summary>
@@ -137,28 +137,28 @@ namespace DontWasteWeight.Components
         {
             List<PlateSet> plateSetsRemoved = new List<PlateSet>();
 
-            if (setsToRemove <= _loadedPlates.Count)
+            if (setsToRemove <= loadedPlates.Count)
             {
                 for (int i = 0; i < setsToRemove; i++)
                 {
-                    plateSetsRemoved.Add(_loadedPlates.Pop());
+                    plateSetsRemoved.Add(loadedPlates.Pop());
                 }
 
-                if (_loadedPlates.Count > 0)
+                if (loadedPlates.Count > 0)
                 {
-                    decimal newTotalWeight = _barWeight;
-                    Stack<PlateSet> addingStack = new Stack<PlateSet>(_loadedPlates);
+                    decimal newTotalWeight = barWeight;
+                    Stack<PlateSet> addingStack = new Stack<PlateSet>(loadedPlates);
 
                     while (addingStack.Count > 0)
                     {
                         newTotalWeight = newTotalWeight + addingStack.Pop().TotalWeight;
                     }
 
-                    _totalWeight = newTotalWeight;
+                    totalWeight = newTotalWeight;
                 }
                 else
                 {
-                    _totalWeight = _barWeight;
+                    totalWeight = barWeight;
                 }
             }
 

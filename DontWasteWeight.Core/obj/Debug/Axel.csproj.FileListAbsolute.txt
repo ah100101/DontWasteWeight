@@ -13,3 +13,8 @@ C:\ah100101\apps\DontWasteWeight\Axel\bin\Debug\Axel.pdb
 C:\ah100101\apps\DontWasteWeight\Axel\obj\Debug\Axel.csprojResolveAssemblyReference.cache
 C:\ah100101\apps\DontWasteWeight\Axel\obj\Debug\Axel.dll
 C:\ah100101\apps\DontWasteWeight\Axel\obj\Debug\Axel.pdb
+C:\ah100101\applications\DontWasteWeight\Axel\bin\Debug\Axel.dll
+C:\ah100101\applications\DontWasteWeight\Axel\bin\Debug\Axel.pdb
+C:\ah100101\applications\DontWasteWeight\Axel\obj\Debug\Axel.csprojResolveAssemblyReference.cache
+C:\ah100101\applications\DontWasteWeight\Axel\obj\Debug\Axel.dll
+C:\ah100101\applications\DontWasteWeight\Axel\obj\Debug\Axel.pdb

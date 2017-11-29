@@ -1,13 +1,13 @@
-﻿using Axel.Data.Search;
-using Axel.Data.Structures;
-using Axel.Utilities;
+﻿using DontWasteWeight.Core.Data.Search;
+using DontWasteWeight.Core.Data.Structures;
+using DontWasteWeight.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Axel.Algorithms.Search.Generic
+namespace DontWasteWeight.Core.Algorithms.Search.Generic
 {
     // Summary:
     //      Represents a variable size Best First Search (A* Search) Algorithm for finding best path to solution element
@@ -22,29 +22,29 @@ namespace Axel.Algorithms.Search.Generic
         /// <summary>
         /// Target item search finds solution to
         /// </summary>
-        protected T _target;
+        protected T target;
 
         /// <summary>
         /// Starting item search finds solution from
         /// </summary>
-        protected T _origin;
+        protected T origin;
 
         /// <summary>
         /// Binary heap for storing items by sort
         /// </summary>
-        protected BinaryHeap<T> _binaryheap;
+        protected BinaryHeap<T> binaryheap;
 
         /// <summary>
         /// Boolean for storing if search is solved or not
         /// </summary>
-        protected bool _solved;
+        protected bool solved;
 
         /// <summary>
         /// Contains all nodes that have been visited
         /// </summary>
-        protected List<T> _history;
+        protected List<T> history;
 
-        protected Comparison<T> _comparison;
+        protected Comparison<T> comparison;
 
         #endregion
 
@@ -54,12 +54,12 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                if (_comparison != null)
-                    return _comparison;
+                if (comparison != null)
+                    return comparison;
                 else
                 {
-                    _comparison = new Comparison<T>(Comparer<T>.Default.Compare);
-                    return _comparison;
+                    comparison = new Comparison<T>(Comparer<T>.Default.Compare);
+                    return comparison;
                 }
             }
         }
@@ -71,11 +71,11 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                return _history;
+                return history;
             }
             set
             {
-                _history = value;
+                history = value;
             }
         }
 
@@ -86,12 +86,12 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                return _target;
+                return target;
             }
 
             set
             {
-                _target = value;
+                target = value;
             }
         }
 
@@ -102,12 +102,12 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                return _origin;
+                return origin;
             }
 
             set
             {
-                _origin = value;
+                origin = value;
             }
         }
 
@@ -118,12 +118,12 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                return _binaryheap;
+                return binaryheap;
             }
 
             set
             {
-                _binaryheap = value;
+                binaryheap = value;
             }
         }
 
@@ -134,7 +134,7 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                return _solved;
+                return solved;
             }
         }
 
@@ -145,7 +145,7 @@ namespace Axel.Algorithms.Search.Generic
         {
             get
             {
-                return _binaryheap.Peek();
+                return binaryheap.Peek();
             }
         }
 
@@ -186,14 +186,14 @@ namespace Axel.Algorithms.Search.Generic
             T[] expandedNodes = node.Expand();
 
             //if expanded nodes returned, and history has items
-            if(expandedNodes != null && expandedNodes.Count() > 0 && _history.Count > 0)
+            if(expandedNodes != null && expandedNodes.Count() > 0 && history.Count > 0)
             {
                 //if expandedNodes possible, determine if visited
                 foreach(T expandedNode in expandedNodes)
                 {
                     //if there are no equivalent nodes in history, add it to binary heap
-                    if(!_history.Any<T>(item => item.IsEquivalentNode(expandedNode)))
-                        _binaryheap.Push(expandedNode);
+                    if(!history.Any<T>(item => item.IsEquivalentNode(expandedNode)))
+                        binaryheap.Push(expandedNode);
                 }
             }
         }
@@ -209,19 +209,19 @@ namespace Axel.Algorithms.Search.Generic
             try
             {
                 //if an origin and target node has been set, continue search
-                if(_origin != null && _target != null)
+                if(origin != null && target != null)
                 {
                     //while the search is not solved and binaryheap has items, expand best item until at goal
-                    while(!_solved && _binaryheap.Size > 0)
+                    while(!solved && binaryheap.Size > 0)
                     {
                         //create clone of binary heap top
-                        T current = Cloner.Clone<T>(_binaryheap.Pop());
+                        T current = Cloner.Clone<T>(binaryheap.Pop());
 
                         //add node to history to prevent visiting again
-                        _history.Add(current);
+                        history.Add(current);
 
                         //if current and target are not the same
-                        if(!_target.IsEquivalentNode(current))
+                        if(!target.IsEquivalentNode(current))
                         {
                             //expand the current node, add results to heap
                             Expand(current);
@@ -229,14 +229,14 @@ namespace Axel.Algorithms.Search.Generic
                         else
                         {
                             //if they are the same then a solution was found
-                            _solved = true;
+                            solved = true;
                             response.Solution = current;
                             response.SolutionFound = true;
                             response.Succeeded = true;
                         }
                     }
 
-                    if (!_solved)
+                    if (!solved)
                         response.SolutionFound = false;
                 }
                 else
@@ -263,12 +263,12 @@ namespace Axel.Algorithms.Search.Generic
         /// <param name="origin">Node to search from</param>
         private void Initialize(T target, T origin)
         {
-            _target = target;
-            _origin = origin;
-            _solved = false;
-            _binaryheap = new BinaryHeap<T>();
-            _binaryheap.Push(_origin);
-            _history = new List<T>();
+            this.target = target;
+            this.origin = origin;
+            solved = false;
+            binaryheap = new BinaryHeap<T>();
+            binaryheap.Push(this.origin);
+            history = new List<T>();
         }
 
         #endregion

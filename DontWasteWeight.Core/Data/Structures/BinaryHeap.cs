@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Axel.Data.Structures
+namespace DontWasteWeight.Core.Data.Structures
 {
     /// <summary>
     /// Min Heap structure for keeping lowest valued object at top. Class must implement IComparable
@@ -12,11 +12,11 @@ namespace Axel.Data.Structures
     /// <typeparam name="T"></typeparam>
     public class BinaryHeap<T>
     {
-        protected T[] _items;
+        protected T[] items;
 
-        protected int _size = 0;
+        protected int size = 0;
 
-        protected Comparison<T> _comparison;
+        protected Comparison<T> comparison;
 
         public BinaryHeap()
         {
@@ -40,48 +40,48 @@ namespace Axel.Data.Structures
 
         private void Initialize(int size, Comparison<T> comparison)
         {
-            _items = new T[size];
-            _comparison = comparison;
-            if (_comparison == null)
-                _comparison = new Comparison<T>(Comparer<T>.Default.Compare);
+            items = new T[size];
+            this.comparison = comparison;
+            if (this.comparison == null)
+                this.comparison = new Comparison<T>(Comparer<T>.Default.Compare);
         }
 
         public int Size
         {
             get
             {
-                return _size;
+                return size;
             }
         }
 
         public void Push(T item)
         {
-            if (_size == _items.Length)
+            if (size == items.Length)
                 Resize();
-            _items[_size] = item;
-            HeapifyUp(_size);
-            _size++;
+            items[size] = item;
+            HeapifyUp(size);
+            size++;
         }
 
         public T Peek()
         {
-            return _items[0];
+            return items[0];
         }
 
         public T Pop()
         {
-            T item = _items[0];
-            _size--;
-            _items[0] = _items[_size];
+            T item = items[0];
+            size--;
+            items[0] = items[size];
             HeapifyDown(0);
             return item;
         }
 
         private void Resize()
         {
-            T[] resizedData = new T[_items.Length * 2];
-            Array.Copy(_items, 0, resizedData, 0, _items.Length);
-            _items = resizedData;
+            T[] resizedData = new T[items.Length * 2];
+            Array.Copy(items, 0, resizedData, 0, items.Length);
+            items = resizedData;
         }
 
         private void HeapifyUp(int childIdx)
@@ -89,11 +89,11 @@ namespace Axel.Data.Structures
             if (childIdx > 0)
             {
                 int parentIdx = (childIdx - 1) / 2;
-                if (_comparison.Invoke(_items[childIdx], _items[parentIdx]) > 0)
+                if (comparison.Invoke(items[childIdx], items[parentIdx]) > 0)
                 {
-                    T t = _items[parentIdx];
-                    _items[parentIdx] = _items[childIdx];
-                    _items[childIdx] = t;
+                    T t = items[parentIdx];
+                    items[parentIdx] = items[childIdx];
+                    items[childIdx] = t;
                     HeapifyUp(parentIdx);
                 }
             }
@@ -104,19 +104,19 @@ namespace Axel.Data.Structures
             int leftChildIdx = 2 * parentIdx + 1;
             int rightChildIdx = leftChildIdx + 1;
             int largestChildIdx = parentIdx;
-            if (leftChildIdx < _size && _comparison.Invoke(_items[leftChildIdx], _items[largestChildIdx]) > 0)
+            if (leftChildIdx < size && comparison.Invoke(items[leftChildIdx], items[largestChildIdx]) > 0)
             {
                 largestChildIdx = leftChildIdx;
             }
-            if (rightChildIdx < _size && _comparison.Invoke(_items[rightChildIdx], _items[largestChildIdx]) > 0)
+            if (rightChildIdx < size && comparison.Invoke(items[rightChildIdx], items[largestChildIdx]) > 0)
             {
                 largestChildIdx = rightChildIdx;
             }
             if (largestChildIdx != parentIdx)
             {
-                T t = _items[parentIdx];
-                _items[parentIdx] = _items[largestChildIdx];
-                _items[largestChildIdx] = t;
+                T t = items[parentIdx];
+                items[parentIdx] = items[largestChildIdx];
+                items[largestChildIdx] = t;
                 HeapifyDown(largestChildIdx);
             }
         }
